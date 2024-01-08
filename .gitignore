@@ -7,13 +7,12 @@
 *.zip
 *.tar.gz
 *.rar
-*.mvn
 hs_err_pid*
 out/
 target/
 !.mvn/wrapper/maven-wrapper.jar
-!src/main/**/target/
-!src/test/**/target/
+!**/src/main/**/target/
+!**/src/test/**/target/
 
 ### STS ###
 .apt_generated
@@ -37,12 +36,11 @@ target/
 /nbdist/
 /.nb-gradle/
 build/
-!src/main/**/build/
-!src/test/**/build/
+!**/src/main/**/build/
+!**/src/test/**/build/
 
 ### VS Code ###
 .vscode/
 
 *.db
 db/*
-/.mvn/
