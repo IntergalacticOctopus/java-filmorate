@@ -33,7 +33,6 @@ public class UserControllerTest {
     }
 
 
-
     @Test
     void create() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post(PATH)
@@ -43,6 +42,7 @@ public class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.content()
                         .json(getContentFromFile("controller/response/user.json")));
     }
+
     @Test
     void createNegative() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post(PATH)

@@ -17,17 +17,19 @@ public class FilmController extends BaseController<Film> {
     private final static LocalDate START_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
     @PostMapping
-    public Film create (@Valid @RequestBody Film film) {
+    public Film create(@Valid @RequestBody Film film) {
         log.info("Creating film {}", film);
         return super.create(film);
     }
+
     @PutMapping
-    public Film update (@Valid @RequestBody Film film) {
+    public Film update(@Valid @RequestBody Film film) {
         log.info("Updating film {}", film);
         return super.update(film);
     }
+
     @GetMapping
-    public List<Film> getAll () {
+    public List<Film> getAll() {
         log.info("Get all films");
         return super.getAll();
     }
@@ -35,7 +37,7 @@ public class FilmController extends BaseController<Film> {
 
     @Override
     public void validate(Film data) {
-        if(data.getReleaseDate().isBefore(START_RELEASE_DATE)) {
+        if (data.getReleaseDate().isBefore(START_RELEASE_DATE)) {
             throw new FilmorateValidationException("Film release date is invalid");
         }
     }

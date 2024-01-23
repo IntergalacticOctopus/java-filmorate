@@ -73,10 +73,9 @@ class FilmControllerTest {
                         .content(getContentFromFile("controller/request/updatedFilm.json")))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content()
-                        .json(getContentFromFile("controller/response/updatedFilm.json")));;
+                        .json(getContentFromFile("controller/response/updatedFilm.json")));
+        ;
     }
-
-
 
 
     @Test

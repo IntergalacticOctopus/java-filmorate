@@ -13,12 +13,14 @@ public abstract class BaseController<T extends BaseUnit> {
 
     private final Map<Long, T> storage = new HashMap<>();
     private int generatedId;
+
     public T create(T data) {
         validate(data);
         data.setId(++generatedId);
         storage.put(data.getId(), data);
-        return  data;
+        return data;
     }
+
     public T update(T data) {
         if (!storage.containsKey(data.getId())) {
             throw new DataNotFoundException(String.format("Data %s not found", data));
@@ -27,6 +29,7 @@ public abstract class BaseController<T extends BaseUnit> {
         storage.put(data.getId(), data);
         return data;
     }
+
     public List<T> getAll() {
         return new ArrayList<>(storage.values());
     }

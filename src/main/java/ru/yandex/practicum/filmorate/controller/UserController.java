@@ -10,19 +10,21 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/users")
-public class UserController extends BaseController<User>{
+public class UserController extends BaseController<User> {
     @PostMapping
-    public User create (@Valid @RequestBody User user) {
+    public User create(@Valid @RequestBody User user) {
         log.info("Creating user {}", user);
         return super.create(user);
     }
+
     @PutMapping
-    public User update (@Valid @RequestBody User user) {
+    public User update(@Valid @RequestBody User user) {
         log.info("Creating user {}", user);
         return super.update(user);
     }
+
     @GetMapping
-    public List<User> getAll () {
+    public List<User> getAll() {
         log.info("Get all Users");
         return super.getAll();
     }
