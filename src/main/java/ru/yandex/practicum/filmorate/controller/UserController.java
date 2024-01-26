@@ -13,8 +13,8 @@ import java.util.List;
 public class UserController extends BaseController<User> {
     @PostMapping
     public User create(@Valid @RequestBody User user) {
-        if (user.getName().isBlank()) {
-            user.setName(user.getEmail());
+        if (user.getName().isEmpty()) {
+            user.setName(user.getLogin());
         }
         log.info("Creating user {}", user);
         return super.create(user);
