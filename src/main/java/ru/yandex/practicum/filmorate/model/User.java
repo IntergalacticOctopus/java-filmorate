@@ -18,7 +18,7 @@ public class User extends BaseUnit {
     private String email;
     @NotBlank
     private String login;
-
+    @NotBlank
     private String name;
     @PastOrPresent
     private LocalDate birthday;
