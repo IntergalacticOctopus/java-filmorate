@@ -14,7 +14,7 @@ import java.util.List;
 @RequestMapping("/films")
 public class FilmController extends BaseController<Film> {
 
-    private final static LocalDate START_RELEASE_DATE = LocalDate.of(1895, 12, 28);
+    private final LocalDate START_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
