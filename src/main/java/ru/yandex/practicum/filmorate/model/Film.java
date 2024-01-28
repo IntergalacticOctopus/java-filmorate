@@ -12,9 +12,11 @@ import java.time.LocalDate;
 
 @Data
 @Builder
-@EqualsAndHashCode(callSuper = true)
-public class Film extends BaseUnit {
+@EqualsAndHashCode(of = {"id"})
 
+public class Film {
+
+    private long id;
     @NotBlank
     private String name;
     @Size(max = 200)

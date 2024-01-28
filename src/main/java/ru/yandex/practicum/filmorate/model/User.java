@@ -9,10 +9,11 @@ import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(of = {"id"})
 @SuperBuilder
 @NoArgsConstructor(force = true)
-public class User extends BaseUnit {
+public class User {
+    private long id;
     @NotEmpty
     @Email
     private String email;
