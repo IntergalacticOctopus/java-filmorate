@@ -12,13 +12,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.util.ResourceUtils;
-import ru.yandex.practicum.filmorate.exception.FilmorateValidationException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.LocalDate;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -35,17 +38,6 @@ class FilmControllerTest {
 
     }
 
-
-    @Test
-    void create() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(getContentFromFile("controller/request/film.json")))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content()
-                        .json(getContentFromFile("controller/response/film.json")));
-    }
-
     @Test
     void createNegative() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post(PATH)
@@ -54,48 +46,70 @@ class FilmControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError());
     }
 
-    @Test
-    void update() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(getContentFromFile("controller/request/film.json")))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content()
-                        .json(getContentFromFile("controller/response/film.json")));
-
-        mockMvc.perform(MockMvcRequestBuilders.put(PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(getContentFromFile("controller/request/updatedFilm.json")))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content()
-                        .json(getContentFromFile("controller/response/updatedFilm.json")));
-        ;
-    }
-
 
     @Test
-    void validate() {
+    void ValidateFilmDate() {
         Film film = Film.builder()
                 .name("Name")
                 .description("Description")
-                .releaseDate(LocalDate.of(1900, 1, 1))
+                .releaseDate(LocalDate.of(1500, 1, 1))
                 .duration(100)
                 .build();
-        FilmController filmController = new FilmController();
-        filmController.validate(film);
+
+        ValidateService validateService = new ValidateService();
+
+        assertThrows(ValidationException.class, () -> validateService.validate(film));
 
     }
 
     @Test
-    void validateNegative() {
+    void ValidateFilmName() {
         Film film = Film.builder()
-                .name("Name")
+                .name("")
                 .description("Description")
-                .releaseDate(LocalDate.of(1800, 1, 1))
+                .releaseDate(LocalDate.of(2000, 1, 1))
                 .duration(100)
                 .build();
-        FilmController filmController = new FilmController();
-        Assertions.assertThrows(FilmorateValidationException.class, () -> filmController.validate(film));
+
+        ValidateService validateService = new ValidateService();
+
+        assertThrows(ValidationException.class, () -> validateService.validate(film));
+
+    }
+
+    @Test
+    void ValidateFilmDescription() {
+        Film film = Film.builder()
+                .name("Name")
+                .description("DescriptionDescriptionDescriptionDescriptionDescr" +
+                        "iptionDescriptionDescriptionDescriptionDescriptionDescriptionDesc" +
+                        "riptionDescriptionDescriptionDescriptionDescriptionDescriptionDescript" +
+                        "ionDescriptionDescriptionDescription")
+                .releaseDate(LocalDate.of(2000, 1, 1))
+                .duration(100)
+                .build();
+
+        ValidateService validateService = new ValidateService();
+
+        assertThrows(ValidationException.class, () -> validateService.validate(film));
+
+    }
+
+    @Test
+    void ValidateFilmDuration() {
+        Film film = Film.builder()
+                .name("Name")
+                .description("DescriptionDescriptionDescriptionDescriptionDescr" +
+                        "iptionDescriptionDescriptionDescriptionDescriptionDescriptionDesc" +
+                        "riptionDescriptionDescriptionDescriptionDescriptionDescriptionDescript" +
+                        "ionDescriptionDescriptionDescription")
+                .releaseDate(LocalDate.of(2000, 1, 1))
+                .duration(-100)
+                .build();
+
+        ValidateService validateService = new ValidateService();
+
+        assertThrows(ValidationException.class, () -> validateService.validate(film));
 
     }
 

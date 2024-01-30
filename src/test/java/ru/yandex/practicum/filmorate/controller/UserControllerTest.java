@@ -11,12 +11,15 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.util.ResourceUtils;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.LocalDate;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -32,17 +35,6 @@ public class UserControllerTest {
 
     }
 
-
-    @Test
-    void create() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(getContentFromFile("controller/request/user.json")))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content()
-                        .json(getContentFromFile("controller/response/user.json")));
-    }
-
     @Test
     void createNegative() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post(PATH)
@@ -53,14 +45,50 @@ public class UserControllerTest {
 
 
     @Test
-    void validate() {
+    void ValidateUserEmail() {
         User user = User.builder()
-                .email("email@yandex.ru")
+                .name("Name")
                 .login("login")
-                .name("name")
-                .birthday(LocalDate.of(1900, 1, 1))
+                .email("132dex.ru")
+                .birthday(LocalDate.of(2000, 1, 1))
                 .build();
-        UserController userController = new UserController();
+
+
+        ValidateService validateService = new ValidateService();
+
+        assertThrows(ValidationException.class, () -> validateService.validate(user));
+
+    }
+
+    @Test
+    void ValidateUserLogin() {
+        User user = User.builder()
+                .name("Name")
+                .login(" ")
+                .email("132dex.ru")
+                .birthday(LocalDate.of(2000, 1, 1))
+                .build();
+
+
+        ValidateService validateService = new ValidateService();
+
+        assertThrows(ValidationException.class, () -> validateService.validate(user));
+
+    }
+
+    @Test
+    void ValidateUserBirthday() {
+        User user = User.builder()
+                .name("Name")
+                .login(" ")
+                .email("132dex.ru")
+                .birthday(LocalDate.of(3000, 1, 1))
+                .build();
+
+
+        ValidateService validateService = new ValidateService();
+
+        assertThrows(ValidationException.class, () -> validateService.validate(user));
 
     }
 

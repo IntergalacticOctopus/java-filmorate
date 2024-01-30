@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @SuperBuilder
 @NoArgsConstructor(force = true)
 public class User {
-    private long id;
+    private Long id;
     @NotEmpty
     @Email
     private String email;
