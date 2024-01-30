@@ -19,7 +19,7 @@ public class UserController {
 
     ValidateService validateService = new ValidateService();
     private final Map<Long, User> storage = new HashMap<>();
-    private Long generatedId;
+    private long generatedId;
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
