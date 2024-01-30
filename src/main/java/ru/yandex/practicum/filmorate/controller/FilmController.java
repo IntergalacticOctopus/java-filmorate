@@ -32,7 +32,7 @@ public class FilmController {
 
     @PutMapping
     public Film update(@Valid @RequestBody Film film) {
-        if (film.getId() != (Long) null) {
+        if (film.getId() == null) {
             throw new ValidationException("Films id == null");
         }
         if (!storage.containsKey(film.getId())) {

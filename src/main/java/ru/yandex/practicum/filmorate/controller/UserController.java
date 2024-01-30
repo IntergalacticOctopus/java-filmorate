@@ -34,7 +34,7 @@ public class UserController {
     @PutMapping
     public User update(@Valid @RequestBody User user) {
         validateService.validate(user);
-        if (user.getId() != (Long) null) {
+        if (user.getId() == (null)) {
             throw new ValidationException("Films id == null");
         }
         if (!storage.containsKey(user.getId())) {
