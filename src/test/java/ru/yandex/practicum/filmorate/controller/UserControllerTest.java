@@ -45,7 +45,7 @@ public class UserControllerTest {
 
 
     @Test
-    void ValidateUserEmail() {
+    void validateUserEmail() {
         User user = User.builder()
                 .name("Name")
                 .login("login")
@@ -61,7 +61,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void ValidateUserLogin() {
+    void validateUserLogin() {
         User user = User.builder()
                 .name("Name")
                 .login(" ")
@@ -77,7 +77,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void ValidateUserBirthday() {
+    void validateUserBirthday() {
         User user = User.builder()
                 .name("Name")
                 .login(" ")

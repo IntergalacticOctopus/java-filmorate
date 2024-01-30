@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.util.ResourceUtils;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -48,7 +46,7 @@ class FilmControllerTest {
 
 
     @Test
-    void ValidateFilmDate() {
+    void validateFilmDate() {
         Film film = Film.builder()
                 .name("Name")
                 .description("Description")
@@ -63,7 +61,7 @@ class FilmControllerTest {
     }
 
     @Test
-    void ValidateFilmName() {
+    void validateFilmName() {
         Film film = Film.builder()
                 .name("")
                 .description("Description")
@@ -78,7 +76,7 @@ class FilmControllerTest {
     }
 
     @Test
-    void ValidateFilmDescription() {
+    void validateFilmDescription() {
         Film film = Film.builder()
                 .name("Name")
                 .description("DescriptionDescriptionDescriptionDescriptionDescr" +
@@ -96,7 +94,7 @@ class FilmControllerTest {
     }
 
     @Test
-    void ValidateFilmDuration() {
+    void validateFilmDuration() {
         Film film = Film.builder()
                 .name("Name")
                 .description("DescriptionDescriptionDescriptionDescriptionDescr" +
