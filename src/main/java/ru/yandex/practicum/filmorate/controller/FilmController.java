@@ -23,7 +23,7 @@ public class FilmController {
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-        validateService.validate(film);
+        //validateService.validate(film);
         film.setId(++generatedId);
         storage.put(film.getId(), film);
         log.info("Creating film {}", film);
@@ -38,7 +38,7 @@ public class FilmController {
         if (!storage.containsKey(film.getId())) {
             throw new NotFoundException(String.format("Data %s not found", film));
         }
-        validateService.validate(film);
+        //validateService.validate(film);
         storage.put(film.getId(), film);
         log.info("Updating film {}", film);
         return film;
