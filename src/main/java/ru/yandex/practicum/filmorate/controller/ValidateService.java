@@ -1,11 +1,14 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
-
+@Slf4j
+@Component
 public class ValidateService {
 
     private final LocalDate startReleaseDate = LocalDate.of(1895, 12, 28);
@@ -35,5 +38,13 @@ public class ValidateService {
         if (user.getBirthday().isAfter(LocalDate.now())) {
             throw new ValidationException("User birthday is invalid");
         }
+    }
+    public void validate (User firstUser, User secondUser) {
+        validate(firstUser);
+        validate(secondUser);
+    }
+    public void validate (User user, Film film) {
+        validate(user);
+        validate(film);
     }
 }
