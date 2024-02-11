@@ -1,9 +1,7 @@
 package ru.yandex.practicum.filmorate.storage;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.controller.ValidateService;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -24,6 +22,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     private final Map<Long, Film> storage = new HashMap<>();
     private long generatedId;
+
     @Override
     public Film createFilm(Film film) {
         film.setId(++generatedId);

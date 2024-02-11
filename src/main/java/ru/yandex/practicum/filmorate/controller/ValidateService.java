@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
+
 @Slf4j
 @Component
 public class ValidateService {
@@ -39,11 +40,13 @@ public class ValidateService {
             throw new ValidationException("User birthday is invalid");
         }
     }
-    public void validate (User firstUser, User secondUser) {
+
+    public void validate(User firstUser, User secondUser) {
         validate(firstUser);
         validate(secondUser);
     }
-    public void validate (User user, Film film) {
+
+    public void validate(User user, Film film) {
         validate(user);
         validate(film);
     }

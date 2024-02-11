@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.storage;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,8 +17,9 @@ import java.util.Map;
 @Component("InMemoryUserStorage")
 public class InMemoryUserStorage implements UserStorage {
     private final ValidateService validateService;
+
     @Autowired
-    public InMemoryUserStorage (ValidateService validateService) {
+    public InMemoryUserStorage(ValidateService validateService) {
         this.validateService = validateService;
     }
 

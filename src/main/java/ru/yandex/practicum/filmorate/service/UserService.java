@@ -23,19 +23,24 @@ public class UserService {
     Map<Long, User> storage;
 
     @Autowired
-    public UserService (ValidateService validateService, InMemoryUserStorage inMemoryUserStorage){
+    public UserService(ValidateService validateService, InMemoryUserStorage inMemoryUserStorage) {
         this.validateService = validateService;
         this.inMemoryUserStorage = inMemoryUserStorage;
         this.storage = inMemoryUserStorage.getStorage();
-    };
+    }
+
+    ;
+
     public User createUser(User user) {
         validateService.validate(user);
         return inMemoryUserStorage.createUser(user);
     }
+
     public User updateUser(User user) {
         validateService.validate(user);
         return inMemoryUserStorage.updateUser(user);
     }
+
     public List<User> getAll() {
         return inMemoryUserStorage.getAll();
     }
@@ -60,6 +65,7 @@ public class UserService {
         inMemoryUserStorage.updateUser(secondUser);
         return secondUser;
     }
+
     public User removeFriend(Long userId, Long friendId) {
 
         User firstUser = storage.get(userId);
@@ -80,7 +86,8 @@ public class UserService {
         inMemoryUserStorage.updateUser(secondUser);
         return storage.get(friendId);
     }
-    public List<User> getFriendsList (Long userId) {
+
+    public List<User> getFriendsList(Long userId) {
         User user = storage.get(userId);
 
         Set<Long> friendsId = user.getFriends();
@@ -94,8 +101,9 @@ public class UserService {
 
         return friendsList;
     }
+
     public List<User> getMutualFriends(Long userId, Long friendId) {
-        List<User> userFriends =  getFriendsList(userId);
+        List<User> userFriends = getFriendsList(userId);
         List<User> friendFriends = getFriendsList(friendId);
         userFriends.retainAll(friendFriends);
         return userFriends;

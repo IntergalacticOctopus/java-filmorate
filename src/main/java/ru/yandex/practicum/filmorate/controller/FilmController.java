@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -22,7 +21,7 @@ public class FilmController {
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-        film = filmService.createFilm (film);
+        film = filmService.createFilm(film);
         log.info("Creating film {}", film);
         return film;
     }
@@ -30,7 +29,7 @@ public class FilmController {
     @PutMapping
     public Film update(@Valid @RequestBody Film film) {
         log.info("Updating film {}", film);
-        return filmService.updateFilm (film);
+        return filmService.updateFilm(film);
     }
 
     @GetMapping
@@ -38,19 +37,21 @@ public class FilmController {
         log.info("Get all films");
         return filmService.getAll();
     }
-    //http://localhost:8080/films/1/like/1
+
     @PutMapping("/{id}/like/{userId}")
     public Film addLike(@PathVariable Long id, @PathVariable Long userId) {
         log.info("User {} liked film {}", userId, id);
         Film film = filmService.addLike(userId, id);
         return film;
     }
+
     @DeleteMapping("/{id}/like/{userId}")
     public Film removeLike(@PathVariable Long id, @PathVariable Long userId) {
         log.info("User {} remove like film {}", userId, id);
         Film film = filmService.removeLike(userId, id);
         return film;
     }
+
     @GetMapping("/popular")
     public List<Film> getMovieRatings(@RequestParam(defaultValue = "10") Long count) {
         log.info("Get movie rating with {} count", count);
