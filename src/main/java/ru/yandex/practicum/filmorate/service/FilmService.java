@@ -74,7 +74,7 @@ public class FilmService {
         }
         Film film = filmStorage.get(filmId);
         if (!film.getLikes().contains(userId)) {
-            throw new AlreadyDoneException("Film is not liked by this user");
+            addLike(userId, filmId);
         }
 
 
