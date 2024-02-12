@@ -101,7 +101,7 @@ public class FilmService {
         return inMemoryFilmStorage.getAll();
     }
 
-    public Film getFilmById (Long id) {
+    public Film getFilmById(Long id) {
         if (id == null || !filmStorage.containsKey(id)) {
             throw new NotFoundException("This film does not exist");
         }
