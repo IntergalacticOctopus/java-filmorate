@@ -69,12 +69,12 @@ public class FilmService {
     }
 
     public Film removeLike(Long userId, Long filmId) {
-        if (!userStorage.containsKey(userId) || !filmStorage.containsKey(filmId)) {
-            throw new NotFoundException("User or friend does not exist");
-        }
         Film film = filmStorage.get(filmId);
         if (!film.getLikes().contains(userId)) {
             return film;
+        }
+        if (!userStorage.containsKey(userId) || !filmStorage.containsKey(filmId)) {
+            throw new NotFoundException("User or friend does not exist");
         }
 
 
