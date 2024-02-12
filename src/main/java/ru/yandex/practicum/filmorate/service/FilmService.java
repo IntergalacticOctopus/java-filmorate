@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.controller.ValidateService;
 import ru.yandex.practicum.filmorate.exception.AlreadyDoneException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
@@ -98,6 +99,13 @@ public class FilmService {
 
     public List<Film> getAll() {
         return inMemoryFilmStorage.getAll();
+    }
+
+    public Film getFilmById (Long id) {
+        if (id == null || !filmStorage.containsKey(id)) {
+            throw new NotFoundException("This film does not exist");
+        }
+        return filmStorage.get(id);
     }
 
 }
