@@ -24,7 +24,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
 
-    private final Map<Long, User> storage = new HashMap<>();
+    private static final Map<Long, User> storage = new HashMap<>();
     private long generatedId;
 
     @Override

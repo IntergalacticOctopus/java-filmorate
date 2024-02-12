@@ -20,7 +20,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         return storage;
     }
 
-    private final Map<Long, Film> storage = new HashMap<>();
+    private static final Map<Long, Film> storage = new HashMap<>();
     private long generatedId;
 
     @Override
