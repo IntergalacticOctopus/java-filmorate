@@ -8,7 +8,9 @@ import ru.yandex.practicum.filmorate.controller.ValidateService;
 import ru.yandex.practicum.filmorate.exception.AlreadyDoneException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.util.*;
 
@@ -18,18 +20,22 @@ import java.util.*;
 public class FilmService {
     private final ValidateService validateService;
     private final InMemoryFilmStorage inMemoryFilmStorage;
+    private final InMemoryUserStorage inMemoryUserStorage;
     private final FilmComparator comparator;
     Map<Long, Film> filmStorage;
+    Map<Long, User> userStorage;
 
 
     @Autowired
     public FilmService(ValidateService validateService,
-                       InMemoryFilmStorage inMemoryFilmStorage) {
+                       InMemoryFilmStorage inMemoryFilmStorage, InMemoryUserStorage inMemoryUserStorage) {
         this.validateService = validateService;
         this.inMemoryFilmStorage = inMemoryFilmStorage;
         this.filmStorage = inMemoryFilmStorage.getStorage();
+        this.inMemoryUserStorage = inMemoryUserStorage;
+
         this.comparator = new FilmComparator();
-        ;
+        this.userStorage = inMemoryUserStorage.getStorage();
     }
 
     ;
@@ -63,7 +69,9 @@ public class FilmService {
     }
 
     public Film removeLike(Long userId, Long filmId) {
-
+        if (!userStorage.containsKey(userId) || !filmStorage.containsKey(userId)) {
+            throw new NotFoundException("User or friend does not exist");
+        }
         Film film = filmStorage.get(filmId);
         if (!film.getLikes().contains(userId)) {
             throw new AlreadyDoneException("Film is not liked by this user");

@@ -54,6 +54,9 @@ public class UserService {
     }
 
     public User addFriend(Long userId, Long friendId) {
+        if (!storage.containsKey(userId) || !storage.containsKey(userId)) {
+            throw new NotFoundException("User or friend does not exist");
+        }
         User firstUser = storage.get(userId);
         User secondUser = storage.get(friendId);
         validateService.validate(firstUser, secondUser);

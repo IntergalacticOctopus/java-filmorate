@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -16,7 +17,8 @@ public class FilmController {
 
     private final ValidateService validateService = new ValidateService();
     private final InMemoryFilmStorage inMemoryFilmStorage = new InMemoryFilmStorage();
-    private final FilmService filmService = new FilmService(validateService, inMemoryFilmStorage);
+    private final InMemoryUserStorage inMemoryUserStorage = new InMemoryUserStorage(validateService);
+    private final FilmService filmService = new FilmService(validateService, inMemoryFilmStorage, inMemoryUserStorage);
 
 
     @PostMapping
