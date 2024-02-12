@@ -49,7 +49,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     public void initName(User user) {
-        if (user.getName() == null) {
+        if (user.getName() == null || user.getName() == "") {
             user.setName(user.getLogin());
         }
     }
@@ -59,6 +59,7 @@ public class InMemoryUserStorage implements UserStorage {
         log.info("Get all Users");
         return new ArrayList<>(storage.values());
     }
+
 
     public Map<Long, User> getStorage() {
         return storage;

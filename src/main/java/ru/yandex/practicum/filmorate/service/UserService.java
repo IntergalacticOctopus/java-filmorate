@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.controller.ValidateService;
 import ru.yandex.practicum.filmorate.exception.AlreadyDoneException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
@@ -45,8 +46,14 @@ public class UserService {
         return inMemoryUserStorage.getAll();
     }
 
-    public User addFriend(Long userId, Long friendId) {
+    public User getUserById(Long id) {
+        if (id == null || !storage.containsKey(id)) {
+            throw new NotFoundException("This user does not exist");
+        }
+        return storage.get(id);
+    }
 
+    public User addFriend(Long userId, Long friendId) {
         User firstUser = storage.get(userId);
         User secondUser = storage.get(friendId);
         validateService.validate(firstUser, secondUser);
