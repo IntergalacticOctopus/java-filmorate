@@ -14,6 +14,7 @@ public interface UserStorage {
     List<User> getAll();
 
     Map<Long, User> getStorage();
+
     Map<Long, Set<Long>> getFriendsStorage();
 
     User addFriend(Long userId, Long friendId);
