@@ -1,40 +1,33 @@
 package ru.yandex.practicum.filmorate.service;
-
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.controller.ValidateService;
-import ru.yandex.practicum.filmorate.exception.AlreadyDoneException;
+import ru.yandex.practicum.filmorate.controller.Validatable;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.*;
 
 import java.util.*;
 
-@Slf4j
-@Component("FilmService")
 @Service
 public class FilmService {
-    private final ValidateService validateService;
-    private final InMemoryFilmStorage inMemoryFilmStorage;
-    private final InMemoryUserStorage inMemoryUserStorage;
-    private final FilmComparator comparator;
+    private final Validatable validateService;
+    private final FilmStorage inMemoryFilmStorage;
+    private final UserStorage inMemoryUserStorage;
+
     Map<Long, Film> filmStorage;
     Map<Long, User> userStorage;
+    Map<Long, Set<Long>> likesStorage;
 
 
     @Autowired
-    public FilmService(ValidateService validateService,
-                       InMemoryFilmStorage inMemoryFilmStorage, InMemoryUserStorage inMemoryUserStorage) {
+    public FilmService(Validatable validateService,
+                       FilmStorage inMemoryFilmStorage, UserStorage inMemoryUserStorage) {
         this.validateService = validateService;
         this.inMemoryFilmStorage = inMemoryFilmStorage;
         this.filmStorage = inMemoryFilmStorage.getStorage();
         this.inMemoryUserStorage = inMemoryUserStorage;
-
-        this.comparator = new FilmComparator();
+        this.likesStorage = inMemoryFilmStorage.getLikesStorage();
         this.userStorage = inMemoryUserStorage.getStorage();
     }
 
@@ -46,73 +39,49 @@ public class FilmService {
     }
 
     public Film updateFilm(Film film) {
+        Long filmId = film.getId();
+        if (filmStorage.get(film.getId()) == null) {
+            throw new NotFoundException(String.format("Data %s not found", film));
+        }
         validateService.validate(film);
         return inMemoryFilmStorage.updateFilm(film);
     }
 
     public Film addLike(Long userId, Long filmId) {
-
         Film film = filmStorage.get(filmId);
-
-        if (film.getLikes().contains(userId)) {
-            throw new AlreadyDoneException("Film is already liked by this user");
+        if (userStorage.get(userId) == null || film == null) {
+            throw new NotFoundException("User or film does not exist");
         }
-
-        Set<Long> likes = film.getLikes();
-        likes.add(userId);
-        film.setLikes(likes);
-
-        film.setLikesCounter(film.getLikesCounter() + 1);
-
-        inMemoryFilmStorage.updateFilm(film);
-        return film;
+        if (likesStorage.get(filmId).contains(userId)) {
+            return film;
+        }
+        return inMemoryFilmStorage.addLike(userId, filmId);
     }
 
     public Film removeLike(Long userId, Long filmId) {
-        if (!userStorage.containsKey(userId) || !filmStorage.containsKey(filmId)) {
+        if (userStorage.get(userId) == null || filmStorage.get(filmId) == null) {
             throw new NotFoundException("User or film does not exist");
         }
         Film film = filmStorage.get(filmId);
-        if (!film.getLikes().contains(userId)) {
+        if (!likesStorage.get(filmId).contains(userId)) {
             return film;
         }
-
-        Set<Long> likes = film.getLikes();
-        likes.remove(userId);
-        film.setLikes(likes);
-
-        film.setLikesCounter(film.getLikesCounter() - 1);
-
-        inMemoryFilmStorage.updateFilm(film);
-        return film;
+        return inMemoryFilmStorage.removeLike(userId, filmId);
     }
 
     public List<Film> getMovieRatings(Long count) {
-        if (count == null) {
-            count = 10L;
-        }
-        List<Film> list = new ArrayList<>((Collection) filmStorage.values());
-        Collections.sort(list, comparator);
-        Collections.reverse(list);
-        if (list.size() < count) {
-            count = (long) list.size();
-        }
-        List<Film> returnList = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            returnList.add(list.get(i));
-        }
-        return returnList;
+        return inMemoryFilmStorage.getMovieRatings(count);
     }
 
     public List<Film> getAll() {
         return inMemoryFilmStorage.getAll();
     }
 
-    public Film getFilmById(Long id) {
-        if (id == null || !filmStorage.containsKey(id)) {
+    public Film getFilmById(long id) {
+        if (filmStorage.get(id) == null) {
             throw new NotFoundException("This film does not exist");
         }
-        return filmStorage.get(id);
+        return inMemoryFilmStorage.getFilmById(id);
     }
 
 }

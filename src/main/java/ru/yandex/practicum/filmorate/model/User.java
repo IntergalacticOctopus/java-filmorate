@@ -25,7 +25,5 @@ public class User {
     private String name;
     @PastOrPresent
     private LocalDate birthday;
-
-    private Set<Long>  friends = new LinkedHashSet<>();
-    private Set<Long> likes = new LinkedHashSet<>();
+    private Set<Long> friends = new LinkedHashSet<>();
 }

@@ -2,29 +2,25 @@ package ru.yandex.practicum.filmorate.storage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.controller.ValidateService;
+import ru.yandex.practicum.filmorate.controller.Validatable;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
-@Component("InMemoryUserStorage")
 public class InMemoryUserStorage implements UserStorage {
-    private final ValidateService validateService;
+    private final Validatable validateService;
 
     @Autowired
-    public InMemoryUserStorage(ValidateService validateService) {
+    public InMemoryUserStorage(Validatable validateService) {
         this.validateService = validateService;
     }
 
 
     private static final Map<Long, User> storage = new HashMap<>();
+    private static final Map<Long, Set<Long>> friendsStorage = new HashMap<>();
     private long generatedId;
 
     @Override
@@ -63,5 +59,73 @@ public class InMemoryUserStorage implements UserStorage {
 
     public Map<Long, User> getStorage() {
         return storage;
+    }
+
+    @Override
+    public User addFriend(Long userId, Long friendId) {
+        Set firstUserFriends = friendsStorage.get(userId);
+        if (firstUserFriends != null) {
+            firstUserFriends.add(friendId);
+            friendsStorage.put(userId, firstUserFriends);
+        } else {
+            Set<Long> friends = new HashSet<>();
+            friends.add(friendId);
+            friendsStorage.put(userId, friends);
+        }
+
+        Set secondUserFriends = friendsStorage.get(friendId);
+        if (secondUserFriends != null) {
+            secondUserFriends.add(userId);
+            friendsStorage.put(friendId, secondUserFriends);
+        } else {
+            Set<Long> friends = new HashSet<>();
+            friends.add(userId);
+            friendsStorage.put(friendId, friends);
+        }
+        return storage.get(friendId);
+    }
+
+    @Override
+    public User removeFriend(Long userId, Long friendId) {
+
+        Set firstUserFriends = friendsStorage.get(userId);
+        if (firstUserFriends == null) {
+            return storage.get(friendId);
+        } else {
+            firstUserFriends.remove(friendId);
+            friendsStorage.put(userId, firstUserFriends);
+        }
+        Set secondUserFriends = friendsStorage.get(friendId);
+        if (secondUserFriends == null) {
+            return storage.get(friendId);
+        } else {
+            secondUserFriends.remove(userId);
+            friendsStorage.put(friendId, firstUserFriends);
+        }
+        return storage.get(friendId);
+    }
+
+    @Override
+    public List<User> getFriendsList(Long userId) {
+
+
+        Set<Long> friendsId = friendsStorage.get(userId);
+        List<User> friendsList = new ArrayList<>();
+        if (friendsId.size() == 0) {
+            return friendsList;
+        }
+
+        for (Long id : friendsId) {
+            friendsList.add(storage.get(id));
+        }
+        return friendsList;
+    }
+
+    @Override
+    public List<User> getCommonFriends(Long userId, Long friendId) {
+        List<User> userFriends = getFriendsList(userId);
+        List<User> friendFriends = getFriendsList(friendId);
+        userFriends.retainAll(friendFriends);
+        return userFriends;
     }
 }

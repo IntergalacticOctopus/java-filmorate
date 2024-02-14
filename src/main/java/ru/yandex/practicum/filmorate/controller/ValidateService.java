@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 @Slf4j
 @Component
-public class ValidateService {
+public class ValidateService implements Validatable {
 
     private final LocalDate startReleaseDate = LocalDate.of(1895, 12, 28);
 
