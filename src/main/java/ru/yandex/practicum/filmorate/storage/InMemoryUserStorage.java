@@ -23,6 +23,17 @@ public class InMemoryUserStorage implements UserStorage {
 
     private static final Map<Long, User> storage = new HashMap<>();
     private static final Map<Long, Set<Long>> friendsStorage = new HashMap<>();
+
+
+    @Override
+    public Map<Long, User> getStorage() {
+        return storage;
+    }
+    @Override
+    public Map<Long, Set<Long>> getFriendsStorage() {
+        return friendsStorage;
+    }
+
     private long generatedId;
 
     @Override
@@ -30,7 +41,7 @@ public class InMemoryUserStorage implements UserStorage {
         initName(user);
         user.setId(++generatedId);
         storage.put(user.getId(), user);
-
+        friendsStorage.put(user.getId(), new HashSet<>());
         return user;
     }
 
@@ -59,9 +70,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
 
-    public Map<Long, User> getStorage() {
-        return storage;
-    }
+
 
     @Override
     public User addFriend(Long userId, Long friendId) {

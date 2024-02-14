@@ -10,18 +10,22 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 public class UserService {
     private final Validatable validateService;
     private final UserStorage inMemoryUserStorage;
     Map<Long, User> storage;
+    Map<Long, Set<Long>> friendsStorage;
+
 
     @Autowired
     public UserService(Validatable validateService, UserStorage inMemoryUserStorage) {
         this.validateService = validateService;
         this.inMemoryUserStorage = inMemoryUserStorage;
         this.storage = inMemoryUserStorage.getStorage();
+        this.friendsStorage = inMemoryUserStorage.getFriendsStorage();
     }
 
     ;
@@ -64,7 +68,7 @@ public class UserService {
         User firstUser = storage.get(userId);
         User secondUser = storage.get(friendId);
         validateService.validate(firstUser, secondUser);
-        if (!inMemoryUserStorage.getFriendsList(userId).contains(friendId)) {
+        if (!friendsStorage.get(userId).contains(friendId)) {
             throw new AlreadyDoneException("User and new_friend are not friends");
         }
         return inMemoryUserStorage.removeFriend(userId, friendId);
