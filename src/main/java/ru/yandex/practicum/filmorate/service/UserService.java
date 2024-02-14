@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.controller.Validatable;
 import ru.yandex.practicum.filmorate.exception.AlreadyDoneException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -52,6 +53,9 @@ public class UserService {
     }
 
     public User addFriend(Long userId, Long friendId) {
+        if (userId == friendId) {
+            throw new ValidationException("userId == friendId");
+        }
         if (storage.get(userId) == null || storage.get(friendId) == null) {
             throw new NotFoundException("User or friend does not exist");
         }
