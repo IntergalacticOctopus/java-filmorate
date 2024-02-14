@@ -25,15 +25,6 @@ public class InMemoryUserStorage implements UserStorage {
     private static final Map<Long, Set<Long>> friendsStorage = new HashMap<>();
 
 
-    @Override
-    public Map<Long, User> getStorage() {
-        return storage;
-    }
-    @Override
-    public Map<Long, Set<Long>> getFriendsStorage() {
-        return friendsStorage;
-    }
-
     private long generatedId;
 
     @Override
@@ -68,8 +59,6 @@ public class InMemoryUserStorage implements UserStorage {
         log.info("Get all Users");
         return new ArrayList<>(storage.values());
     }
-
-
 
 
     @Override
@@ -143,5 +132,15 @@ public class InMemoryUserStorage implements UserStorage {
         List<User> friendFriends = getFriendsList(friendId);
         userFriends.retainAll(friendFriends);
         return userFriends;
+    }
+
+    @Override
+    public Map<Long, User> getStorage() {
+        return storage;
+    }
+
+    @Override
+    public Map<Long, Set<Long>> getFriendsStorage() {
+        return friendsStorage;
     }
 }
