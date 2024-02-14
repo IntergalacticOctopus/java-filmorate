@@ -31,6 +31,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film createFilm(Film film) {
         film.setId(++generatedId);
         storage.put(film.getId(), film);
+        likesStorage.put(film.getId(), new HashSet<>());
 
         return film;
     }
@@ -53,6 +54,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film addLike(Long userId, Long filmId) {
         Set<Long> likeList;
         Film film = storage.get(filmId);
+        film.setLikesCounter(film.getLikesCounter() + 1);
         if (likesStorage.get(filmId) == null) {
             likeList = new HashSet<>();
             likeList.add(userId);
@@ -61,15 +63,18 @@ public class InMemoryFilmStorage implements FilmStorage {
             likeList.add(userId);
         }
         likesStorage.put(filmId, likeList);
-        return film;
+        return updateFilm(film);
     }
 
     @Override
     public Film removeLike(Long userId, Long filmId) {
         Set<Long> likes = likesStorage.get(filmId);
         likes.remove(userId);
+        Film film = storage.get(filmId);
+        film.setLikesCounter(film.getLikesCounter() - 1);
         likesStorage.put(filmId, likes);
-        return storage.get(filmId);
+
+        return updateFilm(film);
     }
 
     @Override

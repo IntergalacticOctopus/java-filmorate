@@ -112,6 +112,11 @@ public class InMemoryUserStorage implements UserStorage {
 
 
         Set<Long> friendsId = friendsStorage.get(userId);
+        if (friendsId == null) {
+            List<User> returnList = new ArrayList<>();
+            return returnList;
+        }
+
         List<User> friendsList = new ArrayList<>();
         if (friendsId.size() == 0) {
             return friendsList;

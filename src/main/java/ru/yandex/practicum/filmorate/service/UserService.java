@@ -54,7 +54,7 @@ public class UserService {
         User firstUser = storage.get(userId);
         User secondUser = storage.get(friendId);
         validateService.validate(firstUser, secondUser);
-        if (firstUser.getFriends().contains(friendId)) {
+        if (inMemoryUserStorage.getFriendsList(userId).contains(friendId)) {
             throw new AlreadyDoneException("User and new_friend are already friends");
         }
         return inMemoryUserStorage.addFriend(userId, friendId);
@@ -64,7 +64,7 @@ public class UserService {
         User firstUser = storage.get(userId);
         User secondUser = storage.get(friendId);
         validateService.validate(firstUser, secondUser);
-        if (!firstUser.getFriends().contains(friendId)) {
+        if (!inMemoryUserStorage.getFriendsList(userId).contains(friendId)) {
             throw new AlreadyDoneException("User and new_friend are not friends");
         }
         return inMemoryUserStorage.removeFriend(userId, friendId);
