@@ -60,10 +60,11 @@ public class FilmService {
     }
 
     public Film removeLike(Long userId, Long filmId) {
-        if (userStorage.get(userId) == null || filmStorage.get(filmId) == null) {
+        Film film = filmStorage.get(filmId);
+        if (userStorage.get(userId) == null || film == null) {
             throw new NotFoundException("User or film does not exist");
         }
-        Film film = filmStorage.get(filmId);
+
         if (!likesStorage.get(filmId).contains(userId)) {
             return film;
         }

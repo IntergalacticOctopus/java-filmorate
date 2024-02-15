@@ -9,6 +9,4 @@ public interface Validatable {
     void validate(User user);
 
     void validate(User firstUser, User secondUser);
-
-    void validate(User user, Film film);
 }

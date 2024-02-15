@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.controller.Validatable;
-import ru.yandex.practicum.filmorate.exception.AlreadyDoneException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -46,10 +45,11 @@ public class UserService {
     }
 
     public User getUserById(Long id) {
-        if (storage.get(id) == null) {
+        User user = storage.get(id);
+        if (user == null) {
             throw new NotFoundException("This user does not exist");
         }
-        return storage.get(id);
+        return user;
     }
 
     public User addFriend(Long userId, Long friendId) {
@@ -59,12 +59,6 @@ public class UserService {
         if (storage.get(userId) == null || storage.get(friendId) == null) {
             throw new NotFoundException("User or friend does not exist");
         }
-        User firstUser = storage.get(userId);
-        User secondUser = storage.get(friendId);
-        validateService.validate(firstUser, secondUser);
-        if (inMemoryUserStorage.getFriendsList(userId).contains(friendId)) {
-            throw new AlreadyDoneException("User and new_friend are already friends");
-        }
         return inMemoryUserStorage.addFriend(userId, friendId);
     }
 
@@ -72,9 +66,6 @@ public class UserService {
         User firstUser = storage.get(userId);
         User secondUser = storage.get(friendId);
         validateService.validate(firstUser, secondUser);
-        if (!friendsStorage.get(userId).contains(friendId)) {
-            throw new AlreadyDoneException("User and new_friend are not friends");
-        }
         return inMemoryUserStorage.removeFriend(userId, friendId);
     }
 
@@ -87,6 +78,9 @@ public class UserService {
     }
 
     public List<User> getCommonFriends(Long userId, Long friendId) {
+        if (storage.get(userId) == null || storage.get(friendId) == null) {
+            throw new NotFoundException("User or friend does not exist");
+        }
         return inMemoryUserStorage.getCommonFriends(userId, friendId);
     }
 }

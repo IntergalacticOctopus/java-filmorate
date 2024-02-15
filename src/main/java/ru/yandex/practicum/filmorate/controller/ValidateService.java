@@ -45,9 +45,4 @@ public class ValidateService implements Validatable {
         validate(firstUser);
         validate(secondUser);
     }
-
-    public void validate(User user, Film film) {
-        validate(user);
-        validate(film);
-    }
 }
