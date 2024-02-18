@@ -71,7 +71,7 @@ public class FilmService {
     }
 
     private void isFilmExist(Long id) {
-        Film film = getFilmById(id);
+        Film film = filmStorage.getFilmById(id);
         if (film == null) {
             throw new NotFoundException("This film" + id + "does not exist ");
         }
