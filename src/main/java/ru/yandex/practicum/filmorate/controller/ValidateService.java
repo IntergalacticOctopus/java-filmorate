@@ -40,9 +40,4 @@ public class ValidateService implements Validatable {
             throw new ValidationException("User birthday is invalid");
         }
     }
-
-    public void validate(User firstUser, User secondUser) {
-        validate(firstUser);
-        validate(secondUser);
-    }
 }

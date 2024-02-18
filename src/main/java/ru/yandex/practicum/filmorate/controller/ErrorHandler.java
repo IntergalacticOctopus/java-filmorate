@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.yandex.practicum.filmorate.exception.InternalServiceException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 
 import java.util.Map;
 
@@ -20,8 +21,13 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleNotFoundException(final NotFoundException exception) {
         log.info("Data not found {}", exception.getMessage());
-        String stacktrace = ExceptionUtils.getStackTrace(exception);
-        return Map.of("Data not found", exception.getMessage(), "Stacktrace: ", stacktrace);
+        return Map.of("Data not found", exception.getMessage());
+    }
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleValidationException(final ValidationException exception) {
+        log.info("Validation error {}", exception.getMessage());
+        return Map.of("Validation error ", exception.getMessage());
     }
 
     @ExceptionHandler

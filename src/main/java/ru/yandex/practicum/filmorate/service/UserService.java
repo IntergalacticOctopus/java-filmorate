@@ -9,78 +9,70 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @Service
 public class UserService {
     private final Validatable validateService;
-    private final UserStorage inMemoryUserStorage;
-    Map<Long, User> storage;
-    Map<Long, Set<Long>> friendsStorage;
+    private final UserStorage userStorage;
 
 
     @Autowired
-    public UserService(Validatable validateService, UserStorage inMemoryUserStorage) {
+    public UserService(Validatable validateService, UserStorage userStorage) {
         this.validateService = validateService;
-        this.inMemoryUserStorage = inMemoryUserStorage;
-        this.storage = inMemoryUserStorage.getStorage();
-        this.friendsStorage = inMemoryUserStorage.getFriendsStorage();
+        this.userStorage = userStorage;
     }
 
     ;
 
     public User createUser(User user) {
         validateService.validate(user);
-        return inMemoryUserStorage.createUser(user);
+        return userStorage.createUser(user);
     }
 
     public User updateUser(User user) {
+        isUserExist(user.getId());
         validateService.validate(user);
-        return inMemoryUserStorage.updateUser(user);
+        return userStorage.updateUser(user);
     }
 
     public List<User> getAll() {
-        return inMemoryUserStorage.getAll();
+        return userStorage.getAll();
     }
 
     public User getUserById(Long id) {
-        User user = storage.get(id);
-        if (user == null) {
-            throw new NotFoundException("This user does not exist");
-        }
+        User user = userStorage.getUserById(id);
         return user;
+    }
+    private void isUserExist(Long id) {
+        User user = getUserById(id);
+        if (user == null) {
+            throw new NotFoundException("This user" + id + "does not exist " );
+        }
     }
 
     public User addFriend(Long userId, Long friendId) {
         if (userId == friendId) {
             throw new ValidationException("userId == friendId");
         }
-        if (storage.get(userId) == null || storage.get(friendId) == null) {
-            throw new NotFoundException("User or friend does not exist");
-        }
-        return inMemoryUserStorage.addFriend(userId, friendId);
+        isUserExist(userId);
+        isUserExist(friendId);
+        return userStorage.addFriend(userId, friendId);
     }
 
     public User removeFriend(Long userId, Long friendId) {
-        User firstUser = storage.get(userId);
-        User secondUser = storage.get(friendId);
-        validateService.validate(firstUser, secondUser);
-        return inMemoryUserStorage.removeFriend(userId, friendId);
+        getUserById(userId);
+        getUserById(friendId);
+        return userStorage.removeFriend(userId, friendId);
     }
 
     public List<User> getFriendsList(Long userId) {
-        User user = storage.get(userId);
-        if (user == null) {
-            throw new NotFoundException("User does not exist");
-        }
-        return inMemoryUserStorage.getFriendsList(userId);
+        isUserExist(userId);
+        return userStorage.getFriendsList(userId);
     }
 
     public List<User> getCommonFriends(Long userId, Long friendId) {
-        if (storage.get(userId) == null || storage.get(friendId) == null) {
-            throw new NotFoundException("User or friend does not exist");
-        }
-        return inMemoryUserStorage.getCommonFriends(userId, friendId);
+        isUserExist(userId);
+        isUserExist(friendId);
+        return userStorage.getCommonFriends(userId, friendId);
     }
 }

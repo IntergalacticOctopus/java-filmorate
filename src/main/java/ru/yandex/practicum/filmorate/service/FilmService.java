@@ -13,77 +13,72 @@ import java.util.*;
 @Service
 public class FilmService {
     private final Validatable validateService;
-    private final FilmStorage inMemoryFilmStorage;
-    private final UserStorage inMemoryUserStorage;
-
-    Map<Long, Film> filmStorage;
-    Map<Long, User> userStorage;
-    Map<Long, Set<Long>> likesStorage;
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
 
 
     @Autowired
     public FilmService(Validatable validateService,
-                       FilmStorage inMemoryFilmStorage, UserStorage inMemoryUserStorage) {
+                       FilmStorage filmStorage, UserStorage userStorage) {
         this.validateService = validateService;
-        this.inMemoryFilmStorage = inMemoryFilmStorage;
-        this.filmStorage = inMemoryFilmStorage.getStorage();
-        this.inMemoryUserStorage = inMemoryUserStorage;
-        this.likesStorage = inMemoryFilmStorage.getLikesStorage();
-        this.userStorage = inMemoryUserStorage.getStorage();
+        this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
     }
 
     ;
 
     public Film createFilm(Film film) {
         validateService.validate(film);
-        return inMemoryFilmStorage.createFilm(film);
+        return filmStorage.createFilm(film);
     }
 
     public Film updateFilm(Film film) {
         Long filmId = film.getId();
-        if (filmStorage.get(film.getId()) == null) {
-            throw new NotFoundException(String.format("Data %s not found", film));
-        }
+        isFilmExist(filmId);
         validateService.validate(film);
-        return inMemoryFilmStorage.updateFilm(film);
+        return filmStorage.updateFilm(film);
     }
 
     public Film addLike(Long userId, Long filmId) {
-        Film film = filmStorage.get(filmId);
-        if (userStorage.get(userId) == null || film == null) {
+        Film film = filmStorage.getFilmById(filmId);
+        if (userStorage.getUserById(userId) == null || film == null) {
             throw new NotFoundException("User or film does not exist");
         }
-        if (likesStorage.get(filmId).contains(userId)) {
+        if (filmStorage.getLikesStorage().get(filmId).contains(userId)) {
             return film;
         }
-        return inMemoryFilmStorage.addLike(userId, filmId);
+        return filmStorage.addLike(userId, filmId);
     }
 
     public Film removeLike(Long userId, Long filmId) {
-        Film film = filmStorage.get(filmId);
-        if (userStorage.get(userId) == null || film == null) {
-            throw new NotFoundException("User or film does not exist");
-        }
-
-        if (!likesStorage.get(filmId).contains(userId)) {
-            return film;
-        }
-        return inMemoryFilmStorage.removeLike(userId, filmId);
+        isFilmExist(userId);
+        //Проверка на наличие юзера больше нигде не производится
+        isUserExist(userId);
+        return filmStorage.removeLike(userId, filmId);
     }
 
     public List<Film> getMovieRatings(Long count) {
-        return inMemoryFilmStorage.getMovieRatings(count);
+        return filmStorage.getMovieRatings(count);
     }
 
     public List<Film> getAll() {
-        return inMemoryFilmStorage.getAll();
+        return filmStorage.getAll();
     }
 
     public Film getFilmById(long id) {
-        if (filmStorage.get(id) == null) {
-            throw new NotFoundException("This film does not exist");
+        return filmStorage.getFilmById(id);
+    }
+    private void isFilmExist(Long id) {
+        Film film = getFilmById(id);
+        if (film == null) {
+            throw new NotFoundException("This film" + id + "does not exist " );
         }
-        return inMemoryFilmStorage.getFilmById(id);
+    }
+    private void isUserExist(Long id) {
+        User user = userStorage.getUserById(id);
+        if (user == null) {
+            throw new NotFoundException("This user" + id + "does not exist " );
+        }
     }
 
 }

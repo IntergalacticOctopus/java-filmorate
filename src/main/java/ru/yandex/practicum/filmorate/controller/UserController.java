@@ -82,7 +82,7 @@ public class UserController {
         log.info("Getting user {} common friends list", id);
         List list = userService.getCommonFriends(id, otherId);
         log.info("Getting user {} common friends list {}", id, list);
-        return userService.getCommonFriends(id, otherId);
+        return list;
     }
 
 

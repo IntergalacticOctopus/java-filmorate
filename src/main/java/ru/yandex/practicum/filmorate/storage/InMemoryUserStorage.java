@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.controller.Validatable;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.*;
@@ -38,12 +37,6 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User updateUser(User user) {
-        if (user.getId() == (null)) {
-            throw new ValidationException("Films id == null");
-        }
-        if (!storage.containsKey(user.getId())) {
-            throw new NotFoundException(String.format("Data %s not found", user));
-        }
         storage.put(user.getId(), user);
         return user;
     }
@@ -87,22 +80,20 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User removeFriend(Long userId, Long friendId) {
-
         Set firstUserFriends = friendsStorage.get(userId);
-        if (firstUserFriends == null) {
-            return storage.get(friendId);
-        } else {
-            firstUserFriends.remove(friendId);
-            friendsStorage.put(userId, firstUserFriends);
-        }
         Set secondUserFriends = friendsStorage.get(friendId);
-        if (secondUserFriends == null) {
-            return storage.get(friendId);
+        User friend = getUserById(friendId);
+        // Если у первого юзера нет в друзьях второго, значит в друзья второго не добавлялся первый
+        if (firstUserFriends == null || secondUserFriends == null) {
+            return friend;
         } else {
+            // Вызов remove уберает друзей из мап друг друга
+            firstUserFriends.remove(friendId);
             secondUserFriends.remove(userId);
-            friendsStorage.put(friendId, firstUserFriends);
+            friendsStorage.put(userId, firstUserFriends);
+            friendsStorage.put(friendId, secondUserFriends);
         }
-        return storage.get(friendId);
+        return friend;
     }
 
     @Override
@@ -142,5 +133,9 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public Map<Long, Set<Long>> getFriendsStorage() {
         return friendsStorage;
+    }
+    @Override
+    public User getUserById(long id) {
+        return storage.get(id);
     }
 }

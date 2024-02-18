@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -78,21 +79,12 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getMovieRatings(Long count) {
-        if (count == null) {
-            count = 10L;
-        }
-        List<Film> list = new ArrayList<>((Collection) storage.values());
-        Collections.sort(list, comparator);
-        Collections.reverse(list);
-        if (list.size() < count) {
-            count = (long) list.size();
-        }
-        List<Film> returnList = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            returnList.add(list.get(i));
-        }
-        return returnList;
+    public List<Film> getMovieRatings(long count) {
+        List<Film> list = storage.values().stream()
+                .sorted(comparator)
+                .limit(Math.min(storage.size(), count))
+                .collect(Collectors.toList());
+        return list;
     }
 
     @Override
