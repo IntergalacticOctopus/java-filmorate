@@ -76,13 +76,16 @@ public class InMemoryFilmStorage implements FilmStorage {
     public List<Film> getMovieRatings(long count) {
         List<Film> list = storage.values().stream()
                 .sorted(comparator)
-                .limit(Math.min(storage.size(), count))
-                .collect(Collectors.collectingAndThen(Collectors.toList(), filmList -> {
-                    //тесты требуют развернутого листа
-                    Collections.reverse(filmList);
-                    return filmList;
-                }));
-        return list;
+                .collect(Collectors.toList());
+        Collections.reverse(list);
+        if (list.size() < count) {
+            count = list.size();
+        }
+        List<Film> returnList = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            returnList.add(list.get(i));
+        }
+        return returnList;
     }
 
     @Override
