@@ -66,6 +66,7 @@ public class FilmService {
     }
 
     public Film getFilmById(long id) {
+        isFilmExist(id);
         return filmStorage.getFilmById(id);
     }
 

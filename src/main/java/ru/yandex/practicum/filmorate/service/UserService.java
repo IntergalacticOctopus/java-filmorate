@@ -40,14 +40,14 @@ public class UserService {
     }
 
     public User getUserById(Long id) {
-        User user = userStorage.getUserById(id);
-        return user;
+        isUserExist(id);
+        return userStorage.getUserById(id);
     }
 
-    private void isUserExist(Long id) {
-        User user = getUserById(id);
+    private void isUserExist(long id) {
+        User user = userStorage.getUserById(id);
         if (user == null) {
-            throw new NotFoundException("This user" + id + "does not exist ");
+            throw new NotFoundException("This user" + user + "does not exist ");
         }
     }
 
@@ -55,6 +55,7 @@ public class UserService {
         if (userId == friendId) {
             throw new ValidationException("userId == friendId");
         }
+
         isUserExist(userId);
         isUserExist(friendId);
         return userStorage.addFriend(userId, friendId);
