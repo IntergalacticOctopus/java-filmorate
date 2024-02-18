@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.controller.Validatable;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.*;
@@ -125,15 +124,6 @@ public class InMemoryUserStorage implements UserStorage {
         return userFriends;
     }
 
-    @Override
-    public Map<Long, User> getStorage() {
-        return storage;
-    }
-
-    @Override
-    public Map<Long, Set<Long>> getFriendsStorage() {
-        return friendsStorage;
-    }
     @Override
     public User getUserById(long id) {
         return storage.get(id);

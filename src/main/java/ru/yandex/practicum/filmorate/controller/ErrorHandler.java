@@ -23,6 +23,7 @@ public class ErrorHandler {
         log.info("Data not found {}", exception.getMessage());
         return Map.of("Data not found", exception.getMessage());
     }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleValidationException(final ValidationException exception) {

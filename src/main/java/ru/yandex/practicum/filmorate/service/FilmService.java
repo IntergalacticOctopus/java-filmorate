@@ -68,16 +68,18 @@ public class FilmService {
     public Film getFilmById(long id) {
         return filmStorage.getFilmById(id);
     }
+
     private void isFilmExist(Long id) {
         Film film = getFilmById(id);
         if (film == null) {
-            throw new NotFoundException("This film" + id + "does not exist " );
+            throw new NotFoundException("This film" + id + "does not exist ");
         }
     }
+
     private void isUserExist(Long id) {
         User user = userStorage.getUserById(id);
         if (user == null) {
-            throw new NotFoundException("This user" + id + "does not exist " );
+            throw new NotFoundException("This user" + id + "does not exist ");
         }
     }
 

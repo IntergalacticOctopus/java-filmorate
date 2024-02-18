@@ -16,15 +16,9 @@ public class InMemoryFilmStorage implements FilmStorage {
     private final FilmComparator comparator = new FilmComparator();
 
     @Override
-    public Map<Long, Film> getStorage() {
-        return storage;
-    }
-
-    @Override
     public Map<Long, Set<Long>> getLikesStorage() {
         return likesStorage;
     }
-
 
     private long generatedId;
 

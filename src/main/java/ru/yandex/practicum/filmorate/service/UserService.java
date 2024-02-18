@@ -43,10 +43,11 @@ public class UserService {
         User user = userStorage.getUserById(id);
         return user;
     }
+
     private void isUserExist(Long id) {
         User user = getUserById(id);
         if (user == null) {
-            throw new NotFoundException("This user" + id + "does not exist " );
+            throw new NotFoundException("This user" + id + "does not exist ");
         }
     }
 
