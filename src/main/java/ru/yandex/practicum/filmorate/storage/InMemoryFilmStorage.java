@@ -77,7 +77,11 @@ public class InMemoryFilmStorage implements FilmStorage {
         List<Film> list = storage.values().stream()
                 .sorted(comparator)
                 .limit(Math.min(storage.size(), count))
-                .collect(Collectors.toList());
+                .collect(Collectors.collectingAndThen(Collectors.toList(), filmList -> {
+                    //тесты требуют развернутого листа
+                    Collections.reverse(filmList);
+                    return filmList;
+                }));
         return list;
     }
 
