@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.HttpStatus;
@@ -41,13 +40,3 @@ public class ErrorHandler {
     }
 }
 
-@Data
-class ErrorModel {
-    private String error;
-    private String stackTrace;
-
-    protected ErrorModel(String error, String stackTrace) {
-        this.error = error;
-        this.stackTrace = stackTrace;
-    }
-}
