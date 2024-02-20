@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.HttpStatus;
@@ -33,9 +34,20 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Map<String, String> handleInternalServiceException(final InternalServiceException exception) {
+    public ErrorModel handleInternalServiceException(final InternalServiceException exception) {
         log.info("Server error {}", exception.getMessage());
         String stacktrace = ExceptionUtils.getStackTrace(exception);
-        return Map.of("Server error ", exception.getMessage(), "Stacktrace: ", stacktrace);
+        return new ErrorModel("Server error: " + exception.getMessage(), stacktrace);
+    }
+}
+
+@Data
+class ErrorModel {
+    private String error;
+    private String stackTrace;
+
+    protected ErrorModel(String error, String stackTrace) {
+        this.error = error;
+        this.stackTrace = stackTrace;
     }
 }

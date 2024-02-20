@@ -28,7 +28,7 @@ public interface FilmStorage {
     public static class FilmComparator implements Comparator<Film> {
         @Override
         public int compare(Film film1, Film film2) {
-            return Long.compare(film1.getLikesCounter(), film2.getLikesCounter());
+            return Long.compare(film2.getLikesCounter(), film1.getLikesCounter());
         }
     }
 }

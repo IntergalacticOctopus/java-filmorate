@@ -54,11 +54,10 @@ public class InMemoryUserStorage implements UserStorage {
 
 
     @Override
-    public User addFriend(Long userId, Long friendId) {
+    public void addFriend(Long userId, Long friendId) {
         Set firstUserFriends = friendsStorage.get(userId);
         if (firstUserFriends != null) {
             firstUserFriends.add(friendId);
-            friendsStorage.put(userId, firstUserFriends);
         } else {
             Set<Long> friends = new HashSet<>();
             friends.add(friendId);
@@ -68,31 +67,26 @@ public class InMemoryUserStorage implements UserStorage {
         Set secondUserFriends = friendsStorage.get(friendId);
         if (secondUserFriends != null) {
             secondUserFriends.add(userId);
-            friendsStorage.put(friendId, secondUserFriends);
         } else {
             Set<Long> friends = new HashSet<>();
             friends.add(userId);
             friendsStorage.put(friendId, friends);
         }
-        return storage.get(friendId);
     }
 
     @Override
-    public User removeFriend(Long userId, Long friendId) {
+    public void removeFriend(Long userId, Long friendId) {
         Set firstUserFriends = friendsStorage.get(userId);
         Set secondUserFriends = friendsStorage.get(friendId);
         User friend = getUserById(friendId);
         // Если у первого юзера нет в друзьях второго, значит в друзья второго не добавлялся первый
         if (firstUserFriends == null || secondUserFriends == null) {
-            return friend;
+            return;
         } else {
             // Вызов remove уберает друзей из мап друг друга
             firstUserFriends.remove(friendId);
             secondUserFriends.remove(userId);
-            friendsStorage.put(userId, firstUserFriends);
-            friendsStorage.put(friendId, secondUserFriends);
         }
-        return friend;
     }
 
     @Override

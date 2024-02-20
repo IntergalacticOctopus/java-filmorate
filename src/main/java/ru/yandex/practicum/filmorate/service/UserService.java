@@ -51,20 +51,20 @@ public class UserService {
         }
     }
 
-    public User addFriend(Long userId, Long friendId) {
+    public void addFriend(Long userId, Long friendId) {
         if (userId == friendId) {
             throw new ValidationException("userId == friendId");
         }
 
         isUserExist(userId);
         isUserExist(friendId);
-        return userStorage.addFriend(userId, friendId);
+        userStorage.addFriend(userId, friendId);
     }
 
-    public User removeFriend(Long userId, Long friendId) {
+    public void removeFriend(Long userId, Long friendId) {
         getUserById(userId);
         getUserById(friendId);
-        return userStorage.removeFriend(userId, friendId);
+        userStorage.removeFriend(userId, friendId);
     }
 
     public List<User> getFriendsList(Long userId) {
