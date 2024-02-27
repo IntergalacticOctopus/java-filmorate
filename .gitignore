@@ -38,3 +38,5 @@ mvnw
 *.db
 db/*
 /filmorate/
+/db/
+/filmorate/
