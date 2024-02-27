@@ -1,12 +1,16 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
 
-public class ValidateService {
+@Slf4j
+@Component
+public class ValidateService implements Validatable {
 
     private final LocalDate startReleaseDate = LocalDate.of(1895, 12, 28);
 
