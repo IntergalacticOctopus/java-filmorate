@@ -1,10 +1,11 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.local;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.controller.Validatable;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.db.user.UserStorage;
 
 import java.util.*;
 
@@ -54,7 +55,7 @@ public class InMemoryUserStorage implements UserStorage {
 
 
     @Override
-    public void addFriend(Long userId, Long friendId) {
+    public void addFriend(Long userId, Long friendId, boolean isUsersFriends) {
         Set firstUserFriends = friendsStorage.get(userId);
         if (firstUserFriends != null) {
             firstUserFriends.add(friendId);
@@ -119,7 +120,12 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User getUserById(long id) {
+    public User getUserById(Long id) {
         return storage.get(id);
+    }
+
+    @Override
+    public boolean isContains(Long id) {
+        return false;
     }
 }

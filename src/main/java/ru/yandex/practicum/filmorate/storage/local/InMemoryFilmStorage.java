@@ -1,8 +1,10 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.local;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.storage.db.film.FilmStorage;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -88,8 +90,28 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film getFilmById(long id) {
+    public Film getFilmById(Long id) {
         return storage.get(id);
+    }
+
+    @Override
+    public List<Genre> getGenres(Long filmId) {
+        return null;
+    }
+
+    @Override
+    public void addGenres(Long filmId, List<Genre> genres) {
+
+    }
+
+    @Override
+    public void updateGenres(Long filmId, List<Genre> genres) {
+
+    }
+
+    @Override
+    public void deleteGenres(Long filmId) {
+
     }
 
 }

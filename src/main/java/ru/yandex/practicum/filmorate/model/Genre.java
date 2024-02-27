@@ -9,10 +9,9 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @SuperBuilder
-public class Mpa {
+public class Genre {
     @NotNull
     private Long id;
-
     @NotNull
     private String name;
 }

@@ -4,8 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import lombok.RequiredArgsConstructor;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -13,11 +12,10 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
-    Validatable validateService = new ValidateService();
-    UserStorage inMemoryUserStorage = new InMemoryUserStorage(validateService);
-    private final UserService userService = new UserService(validateService, inMemoryUserStorage);
-
+    private final ValidateService validateService;
+    private final UserService userService;
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {

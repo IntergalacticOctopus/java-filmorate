@@ -6,7 +6,9 @@ import ru.yandex.practicum.filmorate.controller.Validatable;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.db.friendship.FriendshipDao;
+import ru.yandex.practicum.filmorate.storage.db.user.UserDbStorage;
+import ru.yandex.practicum.filmorate.storage.db.user.UserStorage;
 
 import java.util.List;
 
@@ -14,25 +16,31 @@ import java.util.List;
 public class UserService {
     private final Validatable validateService;
     private final UserStorage userStorage;
-
+    private final FriendshipDao friendshioDbStorage;
 
     @Autowired
-    public UserService(Validatable validateService, UserStorage userStorage) {
+    public UserService(Validatable validateService, UserDbStorage userStorage, FriendshipDao friendshioDbStorage) {
         this.validateService = validateService;
         this.userStorage = userStorage;
+        this.friendshioDbStorage = friendshioDbStorage;
     }
 
-    ;
-
     public User createUser(User user) {
+        toCorrectName(user);
         validateService.validate(user);
         return userStorage.createUser(user);
     }
 
     public User updateUser(User user) {
-        isUserExist(user.getId());
+        toCorrectName(user);
         validateService.validate(user);
         return userStorage.updateUser(user);
+    }
+
+    public void toCorrectName(User user) {
+        if (user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
     }
 
     public List<User> getAll() {
@@ -47,7 +55,7 @@ public class UserService {
     private void isUserExist(long id) {
         User user = userStorage.getUserById(id);
         if (user == null) {
-            throw new NotFoundException("This user" + user + "does not exist ");
+            throw new NotFoundException("User" + user + "not exist");
         }
     }
 
@@ -55,26 +63,26 @@ public class UserService {
         if (userId == friendId) {
             throw new ValidationException("userId == friendId");
         }
-
         isUserExist(userId);
         isUserExist(friendId);
-        userStorage.addFriend(userId, friendId);
+        boolean isUsersFriends = friendshioDbStorage.isFriend(userId, friendId);
+        friendshioDbStorage.addFriend(userId, friendId, isUsersFriends);
     }
 
     public void removeFriend(Long userId, Long friendId) {
         getUserById(userId);
         getUserById(friendId);
-        userStorage.removeFriend(userId, friendId);
+        friendshioDbStorage.removeFriend(userId, friendId);
     }
 
     public List<User> getFriendsList(Long userId) {
         isUserExist(userId);
-        return userStorage.getFriendsList(userId);
+        return friendshioDbStorage.getFriends(userId);
     }
 
     public List<User> getCommonFriends(Long userId, Long friendId) {
         isUserExist(userId);
         isUserExist(friendId);
-        return userStorage.getCommonFriends(userId, friendId);
+        return friendshioDbStorage.getCommonFriends(userId, friendId);
     }
 }

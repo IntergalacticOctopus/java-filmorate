@@ -51,7 +51,7 @@ class FilmControllerTest {
                 .name("Name")
                 .description("Description")
                 .releaseDate(LocalDate.of(1500, 1, 1))
-                .duration(100)
+                .duration(100L)
                 .build();
 
         ValidateService validateService = new ValidateService();
@@ -66,7 +66,7 @@ class FilmControllerTest {
                 .name("")
                 .description("Description")
                 .releaseDate(LocalDate.of(2000, 1, 1))
-                .duration(100)
+                .duration(100L)
                 .build();
 
         ValidateService validateService = new ValidateService();
@@ -84,7 +84,7 @@ class FilmControllerTest {
                         "riptionDescriptionDescriptionDescriptionDescriptionDescriptionDescript" +
                         "ionDescriptionDescriptionDescription")
                 .releaseDate(LocalDate.of(2000, 1, 1))
-                .duration(100)
+                .duration(100L)
                 .build();
 
         ValidateService validateService = new ValidateService();
@@ -102,7 +102,7 @@ class FilmControllerTest {
                         "riptionDescriptionDescriptionDescriptionDescriptionDescriptionDescript" +
                         "ionDescriptionDescriptionDescription")
                 .releaseDate(LocalDate.of(2000, 1, 1))
-                .duration(-100)
+                .duration(-100L)
                 .build();
 
         ValidateService validateService = new ValidateService();

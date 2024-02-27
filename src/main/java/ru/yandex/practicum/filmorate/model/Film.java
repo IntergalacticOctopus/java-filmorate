@@ -5,8 +5,13 @@ import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @EqualsAndHashCode(of = {"id"})
@@ -19,10 +24,14 @@ public class Film {
     private String name;
     @Size(max = 200)
     private String description;
-    @NonNull
+    @NotNull
     private LocalDate releaseDate;
     @Min(1)
-    private int duration;
+    private Long duration;
     private Long likesCounter = 0L;
+
+    @NotNull
+    private Mpa mpa;
+    private List<Genre> genres = new ArrayList<>();
 
 }

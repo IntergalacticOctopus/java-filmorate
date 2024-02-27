@@ -1,6 +1,7 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.db.film;
 
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.util.Comparator;
 import java.util.List;
@@ -23,7 +24,15 @@ public interface FilmStorage {
 
     List<Film> getMovieRatings(long count);
 
-    Film getFilmById(long id);
+    Film getFilmById(Long id);
+
+    List<Genre> getGenres(Long filmId);
+
+    void addGenres(Long filmId, List<Genre> genres);
+
+    void updateGenres(Long filmId, List<Genre> genres);
+
+    void deleteGenres(Long filmId);
 
     public static class FilmComparator implements Comparator<Film> {
         @Override
