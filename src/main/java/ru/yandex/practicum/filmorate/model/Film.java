@@ -30,6 +30,7 @@ public class Film {
 
     @NotNull
     private Mpa mpa;
+    @NotNull
     private List<Genre> genres = new ArrayList<>();
 
 }

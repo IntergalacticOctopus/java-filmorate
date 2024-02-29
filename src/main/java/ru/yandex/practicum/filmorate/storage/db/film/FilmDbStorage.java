@@ -15,8 +15,6 @@ import ru.yandex.practicum.filmorate.storage.mapper.GenreMapper;
 
 import java.sql.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @Slf4j
 @Component("FilmDbStorage")
@@ -53,10 +51,6 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film updateFilm(Film film) {
-        getFilmById(film.getId());
-        if (tableElementsExist("genres") || tableElementsExist("mpa")) {
-            throw new NotFoundException("Data not found");
-        }
         String sql = "UPDATE films SET name=:name, description=:description, release_date=:release_date, " +
                 "duration=:duration, mpa_id=:mpa_id WHERE film_id=:film_id";
         MapSqlParameterSource params = new MapSqlParameterSource();
@@ -85,7 +79,7 @@ public class FilmDbStorage implements FilmStorage {
 
 
     @Override
-    public List<Film> getMovieRatings(long count) {
+    public List<Film> getPopularFilms(long count) {
         List<Film> sortedFilms = namedParameterJdbcTemplate.query("SELECT * FROM films AS f " +
                 "LEFT JOIN likes AS l ON f.film_id = l.film_id" +
                 " GROUP BY f.film_id" +
@@ -157,21 +151,6 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "SELECT COUNT(*) FROM " + tableName;
         Integer count = namedParameterJdbcTemplate.queryForObject(sql, new MapSqlParameterSource(), Integer.class);
         return count == 0;
-    }
-
-    @Override
-    public Map<Long, Set<Long>> getLikesStorage() {
-        return null;
-    }
-
-    @Override
-    public Film addLike(Long userId, Long filmId) {
-        return null;
-    }
-
-    @Override
-    public Film removeLike(Long userId, Long filmId) {
-        return null;
     }
 
 }

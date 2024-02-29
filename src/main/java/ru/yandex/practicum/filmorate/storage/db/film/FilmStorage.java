@@ -16,13 +16,7 @@ public interface FilmStorage {
 
     List<Film> getAll();
 
-    Map<Long, Set<Long>> getLikesStorage();
-
-    Film addLike(Long userId, Long filmId);
-
-    Film removeLike(Long userId, Long filmId);
-
-    List<Film> getMovieRatings(long count);
+    List<Film> getPopularFilms(long count);
 
     Film getFilmById(Long id);
 

@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.controller.ValidateService;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.db.film.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.db.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.db.like.LikeDao;
@@ -39,6 +40,7 @@ public class FilmService {
     }
 
     public Film update(Film film) {
+        isFilmExist(film.getId());
         validateService.validate(film);
         return filmStorage.updateFilm(film);
     }
@@ -48,15 +50,19 @@ public class FilmService {
     }
 
     public Film getFilmById(Long id) {
+        Film film = isFilmExist(id);
+        return film;
+    }
+    private Film isFilmExist(Long id) {
         Film film = filmStorage.getFilmById(id);
+        if (film == null) {
+            throw new NotFoundException("User" + film + "not exist");
+        }
         return film;
     }
 
     public List<Film> getMovieRating(Long count) {
-        if (count < 1) {
-            throw new ValidationException("count < 1");
-        }
-        List<Film> films = filmStorage.getMovieRatings(count);
+        List<Film> films = filmStorage.getPopularFilms(count);
         return films;
     }
 

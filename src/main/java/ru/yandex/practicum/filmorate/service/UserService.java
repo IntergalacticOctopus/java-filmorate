@@ -32,6 +32,7 @@ public class UserService {
     }
 
     public User updateUser(User user) {
+        isUserExist(user.getId());
         toCorrectName(user);
         validateService.validate(user);
         return userStorage.updateUser(user);
@@ -48,15 +49,16 @@ public class UserService {
     }
 
     public User getUserById(Long id) {
-        isUserExist(id);
-        return userStorage.getUserById(id);
+        User user = isUserExist(id);
+        return user;
     }
 
-    private void isUserExist(long id) {
+    private User isUserExist(long id) {
         User user = userStorage.getUserById(id);
         if (user == null) {
             throw new NotFoundException("User" + user + "not exist");
         }
+        return user;
     }
 
     public void addFriend(Long userId, Long friendId) {

@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @Slf4j
@@ -67,7 +68,7 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public List<Film> getMovieRatings(@RequestParam(defaultValue = "10") Long count) {
+    public List<Film> getMovieRatings(@RequestParam(defaultValue = "10") @Min(1) Long count) {
         log.info("Getting movie rating with {} count", count);
         List films = filmService.getMovieRating(count);
         log.info("Get movie rating {} with {} count", films, count);
