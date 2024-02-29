@@ -19,20 +19,17 @@ public class MpaDbStorage implements MpaDao {
 
     @Override
     public @NotNull Mpa getMpaById(Long id) {
-        try {
-            String sql = "SELECT * FROM mpa WHERE id=:id";
-            MapSqlParameterSource params = new MapSqlParameterSource();
-            params.addValue("id", id);
-            Mpa mpa = namedParameterJdbcTemplate.queryForObject(sql, params, new MpaMapper());
-            return mpa;
-        } catch (EmptyResultDataAccessException exception) {
-            throw new NotFoundException("Data not found");
-        }
+        String sql = "SELECT * FROM mpa WHERE mpaId=:mpaId";
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("mpaId", id);
+
+        List<Mpa> mpas = namedParameterJdbcTemplate.query(sql, params, new MpaMapper());
+        return mpas.get(0);
     }
 
     @Override
     public List<Mpa> getAll() {
-        List<Mpa> allMpa = namedParameterJdbcTemplate.query("SELECT * FROM mpa ORDER BY id",
+        List<Mpa> allMpa = namedParameterJdbcTemplate.query("SELECT * FROM mpa ORDER BY mpaId",
                 new MpaMapper());
         return allMpa;
     }

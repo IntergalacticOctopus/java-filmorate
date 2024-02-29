@@ -22,9 +22,9 @@ public interface FilmStorage {
 
     List<Genre> getGenres(Long filmId);
 
-    void addGenres(Long filmId, List<Genre> genres);
+    void addGenres(Long filmId, Set<Genre> genres);
 
-    void updateGenres(Long filmId, List<Genre> genres);
+    void updateGenres(Long filmId, Set<Genre> genres);
 
     void deleteGenres(Long filmId);
 

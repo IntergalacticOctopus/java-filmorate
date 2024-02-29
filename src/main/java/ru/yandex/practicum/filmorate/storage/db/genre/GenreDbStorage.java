@@ -19,20 +19,16 @@ public class GenreDbStorage implements GenreDao {
 
     @Override
     public Genre getGenreById(Long id) {
-        try {
-            String sql = "SELECT id, name FROM genres WHERE id=:id";
-            MapSqlParameterSource params = new MapSqlParameterSource();
-            params.addValue("id", id);
-            Genre genre = namedParameterJdbcTemplate.queryForObject(sql, params, new GenreMapper());
-            return genre;
-        } catch (EmptyResultDataAccessException exception) {
-            throw new NotFoundException("Data not found");
-        }
+        String sql = "SELECT genreId, genreName FROM genres WHERE genreId=:genreId";
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("genreId", id);
+        List<Genre> genres = namedParameterJdbcTemplate.query(sql, params, new GenreMapper());
+        return genres.get(0);
     }
 
     @Override
     public List<Genre> getGenres() {
-        List<Genre> list = namedParameterJdbcTemplate.query("SELECT id, name FROM genres ORDER BY id",
+        List<Genre> list = namedParameterJdbcTemplate.query("SELECT genreId, genreName FROM genres ORDER BY genreId",
                 new GenreMapper());
         return list;
     }
