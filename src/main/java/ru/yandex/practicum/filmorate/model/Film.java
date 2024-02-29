@@ -27,7 +27,6 @@ public class Film {
     @Min(1)
     private Long duration;
     private Long likesCounter = 0L;
-
     @NotNull
     private Mpa mpa;
     @NotNull
