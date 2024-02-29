@@ -4,10 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.db.user.UserDbStorage;
+import ru.yandex.practicum.filmorate.storage.db.user.JdbcFilmStorage;
 
 import java.time.LocalDate;
 
@@ -15,19 +14,18 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @JdbcTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-class UserDbStorageTest {
+class JdbcFilmStorageTest {
     @Autowired
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private final JdbcTemplate jdbcTemplate;
 
     @Test
     public void create() {
         User newUser = new User(1L, "user@email.ru", "vanya123",
                 "Ivan Petrov", LocalDate.of(1990, 1, 1));
-        UserDbStorage userStorage = new UserDbStorage(namedParameterJdbcTemplate, jdbcTemplate);
-        userStorage.createUser(newUser);
+        JdbcFilmStorage userStorage = new JdbcFilmStorage(namedParameterJdbcTemplate);
+        userStorage.create(newUser);
 
-        User savedUser = userStorage.getUserById(1L);
+        User savedUser = userStorage.getById(1L);
 
         assertThat(savedUser)
                 .isNotNull()

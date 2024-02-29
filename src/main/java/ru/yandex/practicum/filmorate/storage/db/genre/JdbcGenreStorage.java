@@ -9,25 +9,30 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.mapper.GenreMapper;
+
 import java.util.List;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class GenreDbStorage implements GenreDao {
+public class JdbcGenreStorage implements GenreStorage {
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
-    public Genre getGenreById(Long id) {
-        String sql = "SELECT genreId, genreName FROM genres WHERE genreId=:genreId";
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("genreId", id);
-        List<Genre> genres = namedParameterJdbcTemplate.query(sql, params, new GenreMapper());
-        return genres.get(0);
+    public Genre getById(Long id) {
+        try {
+            String sql = "SELECT genreId, genreName FROM genres WHERE genreId=:genreId";
+            MapSqlParameterSource params = new MapSqlParameterSource();
+            params.addValue("genreId", id);
+            Genre genre = namedParameterJdbcTemplate.queryForObject(sql, params, new GenreMapper());
+            return genre;
+        } catch (EmptyResultDataAccessException e) {
+            throw new NotFoundException("not found");
+        }
     }
 
     @Override
-    public List<Genre> getGenres() {
+    public List<Genre> getAll() {
         List<Genre> list = namedParameterJdbcTemplate.query("SELECT genreId, genreName FROM genres ORDER BY genreId",
                 new GenreMapper());
         return list;

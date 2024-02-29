@@ -20,7 +20,7 @@ public class UserController {
     @PostMapping
     public User create(@Valid @RequestBody User user) {
         log.info("Creating user {}", user);
-        user = userService.createUser(user);
+        user = userService.create(user);
         log.info("Created user {}", user);
         return user;
     }
@@ -29,7 +29,7 @@ public class UserController {
     public User update(@Valid @RequestBody User user) {
         log.info("Updating user {}", user);
         validateService.validate(user);
-        User returnUser = userService.updateUser(user);
+        User returnUser = userService.update(user);
         log.info("Updated user {}", user);
         return returnUser;
     }
@@ -44,9 +44,9 @@ public class UserController {
 
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id) {
+    public User getById(@PathVariable Long id) {
         log.info("Getting user {}", id);
-        User returnUser = userService.getUserById(id);
+        User returnUser = userService.getById(id);
         log.info("Get user {}", returnUser);
         return returnUser;
     }

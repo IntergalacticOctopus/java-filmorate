@@ -17,46 +17,57 @@ import java.util.List;
 @Slf4j
 @Component("UserDbStorage")
 @RequiredArgsConstructor
-public class UserDbStorage implements UserStorage {
+public class JdbcFilmStorage implements UserStorage {
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public User createUser(User user) {
+    public User create(User user) {
         log.debug("createUser({})", user);
-        jdbcTemplate.update("INSERT INTO users (email, login, name, birthday) "
-                        + "VALUES (?, ?, ?, ?)",
-                user.getEmail(),
-                user.getLogin(),
-                user.getName(),
-                Date.valueOf(user.getBirthday()));
-        User thisUser = jdbcTemplate.queryForObject(
-                "SELECT user_id, email, login, name, birthday "
-                        + "FROM users "
-                        + "WHERE email=?", new UserMapper(), user.getEmail());
+
+        String insertQuery = "INSERT INTO users (email, login, name, birthday) VALUES (:email, :login, :name, :birthday)";
+
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("email", user.getEmail())
+                .addValue("login", user.getLogin())
+                .addValue("name", user.getName())
+                .addValue("birthday", Date.valueOf(user.getBirthday()));
+
+        namedParameterJdbcTemplate.update(insertQuery, params);
+
+        String selectQuery = "SELECT user_id, email, login, name, birthday FROM users WHERE email = :email";
+
+        User thisUser = namedParameterJdbcTemplate.queryForObject(selectQuery, params, new UserMapper());
+
         log.trace("{} user was added to the data base", thisUser);
+
         return thisUser;
     }
 
     @Override
-    public User updateUser(User user) {
-        getUserById(user.getId());
+    public User update(User user) {
+        getById(user.getId());
         log.debug("updateUser({})", user);
-        jdbcTemplate.update("UPDATE users "
-                        + "SET email=?, login=?, name=?, birthday=? "
-                        + "WHERE user_id=?",
-                user.getEmail(),
-                user.getLogin(),
-                user.getName(),
-                Date.valueOf(user.getBirthday()),
-                user.getId());
-        User thisUser = getUserById(user.getId());
-        log.trace("The user {} was updated in the data base", thisUser);
+
+        String updateQuery = "UPDATE users SET email=:email, login=:login, name=:name, birthday=:birthday WHERE user_id=:id";
+
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("email", user.getEmail())
+                .addValue("login", user.getLogin())
+                .addValue("name", user.getName())
+                .addValue("birthday", Date.valueOf(user.getBirthday()))
+                .addValue("id", user.getId());
+
+        namedParameterJdbcTemplate.update(updateQuery, params);
+
+        User thisUser = getById(user.getId());
+
+        log.trace("The user {} was updated in the database", thisUser);
+
         return thisUser;
     }
 
     @Override
-    public User getUserById(Long id) {
+    public User getById(Long id) {
         try {
             String sql = "SELECT * FROM users WHERE user_id=:user_id";
             MapSqlParameterSource params = new MapSqlParameterSource();
@@ -71,10 +82,13 @@ public class UserDbStorage implements UserStorage {
     @Override
     public List<User> getAll() {
         log.debug("getUsers()");
-        List<User> users = jdbcTemplate.query(
-                "SELECT user_id, email, login, name, birthday FROM users ",
+
+        List<User> users = namedParameterJdbcTemplate.query(
+                "SELECT user_id, email, login, name, birthday FROM users",
                 new UserMapper());
-        log.trace("These are users in the data base: {}", users);
+
+        log.trace("These are users in the database: {}", users);
+
         return users;
     }
 
@@ -82,7 +96,7 @@ public class UserDbStorage implements UserStorage {
     public boolean isContains(Long id) {
         log.debug("isContains({})", id);
         try {
-            getUserById(id);
+            getById(id);
             log.trace("The user with id {} was found", id);
             return true;
         } catch (EmptyResultDataAccessException exception) {

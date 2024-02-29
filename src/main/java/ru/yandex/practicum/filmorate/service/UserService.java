@@ -6,8 +6,8 @@ import ru.yandex.practicum.filmorate.controller.Validatable;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.db.friendship.FriendshipDao;
-import ru.yandex.practicum.filmorate.storage.db.user.UserDbStorage;
+import ru.yandex.practicum.filmorate.storage.db.friendship.FriendshipStorage;
+import ru.yandex.practicum.filmorate.storage.db.user.JdbcFilmStorage;
 import ru.yandex.practicum.filmorate.storage.db.user.UserStorage;
 
 import java.util.List;
@@ -16,26 +16,26 @@ import java.util.List;
 public class UserService {
     private final Validatable validateService;
     private final UserStorage userStorage;
-    private final FriendshipDao friendshioDbStorage;
+    private final FriendshipStorage friendshioDbStorage;
 
     @Autowired
-    public UserService(Validatable validateService, UserDbStorage userStorage, FriendshipDao friendshioDbStorage) {
+    public UserService(Validatable validateService, JdbcFilmStorage userStorage, FriendshipStorage friendshioDbStorage) {
         this.validateService = validateService;
         this.userStorage = userStorage;
         this.friendshioDbStorage = friendshioDbStorage;
     }
 
-    public User createUser(User user) {
+    public User create(User user) {
         toCorrectName(user);
         validateService.validate(user);
-        return userStorage.createUser(user);
+        return userStorage.create(user);
     }
 
-    public User updateUser(User user) {
+    public User update(User user) {
         isUserExist(user.getId());
         toCorrectName(user);
         validateService.validate(user);
-        return userStorage.updateUser(user);
+        return userStorage.update(user);
     }
 
     public void toCorrectName(User user) {
@@ -48,13 +48,13 @@ public class UserService {
         return userStorage.getAll();
     }
 
-    public User getUserById(Long id) {
+    public User getById(Long id) {
         User user = isUserExist(id);
         return user;
     }
 
     private User isUserExist(long id) {
-        User user = userStorage.getUserById(id);
+        User user = userStorage.getById(id);
         if (user == null) {
             throw new NotFoundException("User" + user + "not exist");
         }
@@ -67,13 +67,12 @@ public class UserService {
         }
         isUserExist(userId);
         isUserExist(friendId);
-        boolean isUsersFriends = friendshioDbStorage.isFriend(userId, friendId);
-        friendshioDbStorage.addFriend(userId, friendId, isUsersFriends);
+        friendshioDbStorage.addFriend(userId, friendId, true);
     }
 
     public void removeFriend(Long userId, Long friendId) {
-        getUserById(userId);
-        getUserById(friendId);
+        getById(userId);
+        getById(friendId);
         friendshioDbStorage.removeFriend(userId, friendId);
     }
 

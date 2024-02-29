@@ -5,15 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.controller.ValidateService;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.db.film.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.db.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.db.like.LikeDao;
-import ru.yandex.practicum.filmorate.storage.db.mpa.MpaDao;
-import ru.yandex.practicum.filmorate.storage.db.user.UserDbStorage;
+import ru.yandex.practicum.filmorate.storage.db.like.LikeStorage;
+import ru.yandex.practicum.filmorate.storage.db.mpa.MpaStorage;
+import ru.yandex.practicum.filmorate.storage.db.user.JdbcFilmStorage;
 import ru.yandex.practicum.filmorate.storage.db.user.UserStorage;
+
 import java.util.*;
 
 @Slf4j
@@ -21,40 +19,41 @@ import java.util.*;
 public class FilmService {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
-    private final MpaDao mpaDao;
-    private final LikeDao likeDao;
+    private final MpaStorage mpaStorage;
+    private final LikeStorage likeStorage;
     private final ValidateService validateService;
 
     @Autowired
-    public FilmService(FilmDbStorage filmStorage, UserDbStorage userStorage, MpaDao mpaDao, LikeDao likeDao, ValidateService validateService) {
+    public FilmService(ru.yandex.practicum.filmorate.storage.db.film.JdbcFilmStorage filmStorage, JdbcFilmStorage userStorage, MpaStorage mpaStorage, LikeStorage likeStorage, ValidateService validateService) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
-        this.mpaDao = mpaDao;
-        this.likeDao = likeDao;
+        this.mpaStorage = mpaStorage;
+        this.likeStorage = likeStorage;
         this.validateService = validateService;
     }
 
     public Film create(Film film) {
         validateService.validate(film);
-        return filmStorage.createFilm(film);
+        return filmStorage.create(film);
     }
 
     public Film update(Film film) {
         isFilmExist(film.getId());
         validateService.validate(film);
-        return filmStorage.updateFilm(film);
+        return filmStorage.update(film);
     }
 
     public List<Film> getAll() {
         return filmStorage.getAll();
     }
 
-    public Film getFilmById(Long id) {
+    public Film getById(Long id) {
         Film film = isFilmExist(id);
         return film;
     }
+
     private Film isFilmExist(Long id) {
-        Film film = filmStorage.getFilmById(id);
+        Film film = filmStorage.getById(id);
         if (film == null) {
             throw new NotFoundException("User" + film + "not exist");
         }
@@ -67,26 +66,26 @@ public class FilmService {
     }
 
     public Film like(Long id, Long userId) {
-        Film film = filmStorage.getFilmById(id);
+        Film film = filmStorage.getById(id);
         if (film == null) {
             throw new NotFoundException("Film not found");
         }
-        if (userStorage.getUserById(userId) == null) {
+        if (userStorage.getById(userId) == null) {
             throw new NotFoundException("User not found");
         }
-        likeDao.like(id, userId);
+        likeStorage.like(id, userId);
         return film;
     }
 
     public Film removeLike(Long id, Long userId) {
-        Film film = filmStorage.getFilmById(id);
+        Film film = filmStorage.getById(id);
         if (film == null) {
             throw new NotFoundException("Film not found");
         }
         if (!userStorage.isContains(userId)) {
             throw new NotFoundException("User not found");
         }
-        likeDao.removeLike(id, userId);
+        likeStorage.removeLike(id, userId);
         return film;
     }
 

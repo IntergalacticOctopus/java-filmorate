@@ -14,17 +14,22 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class MpaDbStorage implements MpaDao {
+public class JdbcMpaStorage implements MpaStorage {
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
-    public @NotNull Mpa getMpaById(Long id) {
-        String sql = "SELECT * FROM mpa WHERE mpaId=:mpaId";
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("mpaId", id);
+    public @NotNull Mpa getById(Long id) {
+        try {
+            String sql = "SELECT * FROM mpa WHERE mpaId=:mpaId";
+            MapSqlParameterSource params = new MapSqlParameterSource();
+            params.addValue("mpaId", id);
+            Mpa mpa = namedParameterJdbcTemplate.queryForObject(sql, params, new MpaMapper());
+            return mpa;
+        } catch (EmptyResultDataAccessException e) {
+            throw new NotFoundException("not found");
+        }
 
-        List<Mpa> mpas = namedParameterJdbcTemplate.query(sql, params, new MpaMapper());
-        return mpas.get(0);
+
     }
 
     @Override
