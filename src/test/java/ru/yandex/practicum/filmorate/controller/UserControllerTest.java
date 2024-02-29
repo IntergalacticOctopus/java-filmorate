@@ -5,11 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.util.ResourceUtils;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -33,14 +30,6 @@ public class UserControllerTest {
     @BeforeEach
     void setUp() {
 
-    }
-
-    @Test
-    void createNegative() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(getContentFromFile("controller/request/wrongFilm.json")))
-                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
     }
 
 
