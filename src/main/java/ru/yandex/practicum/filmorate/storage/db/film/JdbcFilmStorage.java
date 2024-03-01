@@ -62,9 +62,8 @@ public class JdbcFilmStorage implements FilmStorage {
         namedParameterJdbcTemplate.update(updateQuery, params);
 
         updateGenres(film.getId(), film.getGenres());
-        film = getById(film.getId());
 
-        return film;
+        return getById(film.getId());
     }
 
     @Override
@@ -119,21 +118,7 @@ public class JdbcFilmStorage implements FilmStorage {
         }
     }
 
-    @Override
-    public List<Genre> getGenres(Long filmId) {
-        String selectQuery = "SELECT DISTINCT g.genreId, g.genreName FROM film_genres AS f " +
-                "LEFT JOIN genres AS g ON f.genre_id = g.genreId" +
-                " WHERE f.film_id = :film_id ORDER BY g.genreId";
-
-        MapSqlParameterSource params = new MapSqlParameterSource().addValue("film_id", filmId);
-
-        List<Genre> genres = namedParameterJdbcTemplate.query(selectQuery, params, new GenreMapper());
-
-        return genres;
-    }
-
-    @Override
-    public void addGenres(Long filmId, Set<Genre> genres) {
+    private void addGenres(Long filmId, Set<Genre> genres) {
         String insertQuery = "INSERT INTO film_genres (film_id, genre_id) VALUES (:film_id, :genre_id)";
 
         List<MapSqlParameterSource> batchParams = new ArrayList<>();
@@ -147,15 +132,13 @@ public class JdbcFilmStorage implements FilmStorage {
         namedParameterJdbcTemplate.batchUpdate(insertQuery, batchParams.toArray(new MapSqlParameterSource[0]));
     }
 
-    @Override
-    public void deleteGenres(Long filmId) {
+    private void deleteGenres(Long filmId) {
         String deleteQuery = "DELETE FROM film_genres WHERE film_id = :film_id";
         MapSqlParameterSource params = new MapSqlParameterSource().addValue("film_id", filmId);
         namedParameterJdbcTemplate.update(deleteQuery, params);
     }
 
-    @Override
-    public void updateGenres(Long filmId, Set<Genre> genres) {
+    private void updateGenres(Long filmId, Set<Genre> genres) {
         deleteGenres(filmId);
         addGenres(filmId, genres);
     }

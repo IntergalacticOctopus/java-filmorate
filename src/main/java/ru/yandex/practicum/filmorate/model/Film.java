@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Data
@@ -16,7 +17,6 @@ import java.util.Set;
 @SuperBuilder
 @NoArgsConstructor(force = true)
 public class Film {
-
     private Long id;
     @NotBlank
     private String name;
@@ -30,6 +30,6 @@ public class Film {
     @NotNull
     private Mpa mpa;
     @NotNull
-    private Set<Genre> genres = new HashSet<>();
-
+    @Builder.Default
+    private Set<Genre> genres = new LinkedHashSet<>();
 }

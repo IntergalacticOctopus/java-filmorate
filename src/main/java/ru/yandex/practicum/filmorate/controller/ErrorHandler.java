@@ -18,7 +18,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFoundException(final NotFoundException exception) {
-        log.error("Data not found {}", exception.getMessage());
+        log.error("Data not found ", exception);
         String stacktrace = ExceptionUtils.getStackTrace(exception);
         String errorMessage = "Data not found error: " + exception.getMessage() + stacktrace;
         return new ErrorResponse(errorMessage);
@@ -27,7 +27,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(final ValidationException exception) {
-        log.error("Validation error {}", exception.getMessage());
+        log.error("Validation error ", exception);
         String stacktrace = ExceptionUtils.getStackTrace(exception);
         String errorMessage = "Validation found error: " + exception.getMessage() + stacktrace;
         return new ErrorResponse(errorMessage);
@@ -36,10 +36,10 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleInternalServiceException(final Exception exception) {
-        log.error("Server error {}", exception.getMessage());
+        log.error("Server error ", exception);
         String stacktrace = ExceptionUtils.getStackTrace(exception);
         String errorMessage = "InternalService error: " + exception.getMessage() + stacktrace;
-        return new ErrorResponse("errorMessage");
+        return new ErrorResponse(errorMessage);
     }
 }
 

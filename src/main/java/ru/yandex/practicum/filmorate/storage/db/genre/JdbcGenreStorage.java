@@ -20,14 +20,14 @@ public class JdbcGenreStorage implements GenreStorage {
 
     @Override
     public Genre getById(Long id) {
-        try {
-            String sql = "SELECT genreId, genreName FROM genres WHERE genreId=:genreId";
-            MapSqlParameterSource params = new MapSqlParameterSource();
-            params.addValue("genreId", id);
-            Genre genre = namedParameterJdbcTemplate.queryForObject(sql, params, new GenreMapper());
-            return genre;
-        } catch (EmptyResultDataAccessException e) {
-            throw new NotFoundException("not found");
+        String sql = "SELECT genreId, genreName FROM genres WHERE genreId=:genreId";
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("genreId", id);
+        List<Genre> genre = namedParameterJdbcTemplate.query(sql, params, new GenreMapper());
+        if (genre.isEmpty()) {
+            throw new NotFoundException("Genre not found");
+        } else {
+            return genre.get(0);
         }
     }
 

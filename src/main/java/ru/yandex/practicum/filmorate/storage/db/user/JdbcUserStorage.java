@@ -16,7 +16,7 @@ import java.util.List;
 @Slf4j
 @Component("UserDbStorage")
 @RequiredArgsConstructor
-public class JdbcFilmStorage implements UserStorage {
+public class JdbcUserStorage implements UserStorage {
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
@@ -67,14 +67,15 @@ public class JdbcFilmStorage implements UserStorage {
 
     @Override
     public User getById(Long id) {
-        try {
-            String sql = "SELECT * FROM users WHERE user_id=:user_id";
-            MapSqlParameterSource params = new MapSqlParameterSource();
-            params.addValue("user_id", id);
-            User returnedUser = namedParameterJdbcTemplate.queryForObject(sql, params, new UserMapper());
-            return returnedUser;
-        } catch (EmptyResultDataAccessException exception) {
-            throw new NotFoundException("Data not found");
+        String sql = "SELECT * FROM users WHERE user_id=:user_id";
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("user_id", id);
+        List<User> returnedUser = namedParameterJdbcTemplate.query(sql, params, new UserMapper());
+
+        if (returnedUser.isEmpty()) {
+            throw new NotFoundException("User not found");
+        } else {
+            return returnedUser.get(0);
         }
     }
 
@@ -103,27 +104,4 @@ public class JdbcFilmStorage implements UserStorage {
             return false;
         }
     }
-
-
-    @Override
-    public void addFriend(Long userId, Long friendId, boolean isUsersFriends) {
-
-    }
-
-    @Override
-    public void removeFriend(Long userId, Long friendId) {
-
-    }
-
-    @Override
-    public List<User> getFriendsList(Long userId) {
-        return null;
-    }
-
-    @Override
-    public List<User> getCommonFriends(Long userId, Long friendId) {
-        return null;
-    }
-
-
 }

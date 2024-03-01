@@ -6,8 +6,8 @@ import ru.yandex.practicum.filmorate.controller.Validatable;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.db.friendship.FriendshipStorage;
-import ru.yandex.practicum.filmorate.storage.db.user.JdbcFilmStorage;
+import ru.yandex.practicum.filmorate.storage.db.friendship.FriendStorage;
+import ru.yandex.practicum.filmorate.storage.db.user.JdbcUserStorage;
 import ru.yandex.practicum.filmorate.storage.db.user.UserStorage;
 
 import java.util.List;
@@ -16,25 +16,25 @@ import java.util.List;
 public class UserService {
     private final Validatable validateService;
     private final UserStorage userStorage;
-    private final FriendshipStorage friendshioDbStorage;
+    private final FriendStorage friendshioDbStorage;
 
     @Autowired
-    public UserService(Validatable validateService, JdbcFilmStorage userStorage, FriendshipStorage friendshioDbStorage) {
+    public UserService(Validatable validateService, JdbcUserStorage userStorage, FriendStorage friendshioDbStorage) {
         this.validateService = validateService;
         this.userStorage = userStorage;
         this.friendshioDbStorage = friendshioDbStorage;
     }
 
     public User create(User user) {
-        toCorrectName(user);
         validateService.validate(user);
+        toCorrectName(user);
         return userStorage.create(user);
     }
 
     public User update(User user) {
+        validateService.validate(user);
         isUserExist(user.getId());
         toCorrectName(user);
-        validateService.validate(user);
         return userStorage.update(user);
     }
 
@@ -67,7 +67,7 @@ public class UserService {
         }
         isUserExist(userId);
         isUserExist(friendId);
-        friendshioDbStorage.addFriend(userId, friendId, true);
+        friendshioDbStorage.add(userId, friendId, true);
     }
 
     public void removeFriend(Long userId, Long friendId) {

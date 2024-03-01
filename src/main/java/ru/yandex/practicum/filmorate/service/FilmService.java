@@ -9,7 +9,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.db.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.db.like.LikeStorage;
 import ru.yandex.practicum.filmorate.storage.db.mpa.MpaStorage;
-import ru.yandex.practicum.filmorate.storage.db.user.JdbcFilmStorage;
+import ru.yandex.practicum.filmorate.storage.db.user.JdbcUserStorage;
 import ru.yandex.practicum.filmorate.storage.db.user.UserStorage;
 
 import java.util.*;
@@ -24,7 +24,7 @@ public class FilmService {
     private final ValidateService validateService;
 
     @Autowired
-    public FilmService(ru.yandex.practicum.filmorate.storage.db.film.JdbcFilmStorage filmStorage, JdbcFilmStorage userStorage, MpaStorage mpaStorage, LikeStorage likeStorage, ValidateService validateService) {
+    public FilmService(ru.yandex.practicum.filmorate.storage.db.film.JdbcFilmStorage filmStorage, JdbcUserStorage userStorage, MpaStorage mpaStorage, LikeStorage likeStorage, ValidateService validateService) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
         this.mpaStorage = mpaStorage;
@@ -73,7 +73,7 @@ public class FilmService {
         if (userStorage.getById(userId) == null) {
             throw new NotFoundException("User not found");
         }
-        likeStorage.like(id, userId);
+        likeStorage.add(id, userId);
         return film;
     }
 
@@ -85,7 +85,7 @@ public class FilmService {
         if (!userStorage.isContains(userId)) {
             throw new NotFoundException("User not found");
         }
-        likeStorage.removeLike(id, userId);
+        likeStorage.remove(id, userId);
         return film;
     }
 

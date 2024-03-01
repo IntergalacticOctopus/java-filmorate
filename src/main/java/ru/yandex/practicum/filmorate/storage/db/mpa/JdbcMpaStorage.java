@@ -19,17 +19,15 @@ public class JdbcMpaStorage implements MpaStorage {
 
     @Override
     public @NotNull Mpa getById(Long id) {
-        try {
-            String sql = "SELECT * FROM mpa WHERE mpaId=:mpaId";
-            MapSqlParameterSource params = new MapSqlParameterSource();
-            params.addValue("mpaId", id);
-            Mpa mpa = namedParameterJdbcTemplate.queryForObject(sql, params, new MpaMapper());
-            return mpa;
-        } catch (EmptyResultDataAccessException e) {
-            throw new NotFoundException("not found");
+        String sql = "SELECT * FROM mpa WHERE mpaId=:mpaId";
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("mpaId", id);
+        List<Mpa> mpa = namedParameterJdbcTemplate.query(sql, params, new MpaMapper());
+        if (mpa.isEmpty()) {
+            throw new NotFoundException("Mpa not found");
+        } else {
+            return mpa.get(0);
         }
-
-
     }
 
     @Override

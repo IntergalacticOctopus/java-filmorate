@@ -12,14 +12,14 @@ public class JdbcLikeStorage implements LikeStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public void like(Long filmId, Long userId) {
+    public void add(Long filmId, Long userId) {
         log.debug("like({}, {})", filmId, userId);
         jdbcTemplate.update("INSERT INTO likes (film_id, user_id) VALUES (?, ?)", filmId, userId);
         log.trace("The movie {} liked by user {}", filmId, userId);
     }
 
     @Override
-    public void removeLike(Long filmId, Long userId) {
+    public void remove(Long filmId, Long userId) {
         log.debug("dislike({}, {})", filmId, userId);
         jdbcTemplate.update("DELETE FROM likes WHERE film_id=? AND user_id=?", filmId, userId);
         log.trace("The user {}, disliked the movie {}", userId, filmId);
