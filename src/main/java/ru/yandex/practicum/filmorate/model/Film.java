@@ -8,7 +8,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -26,7 +25,6 @@ public class Film {
     private LocalDate releaseDate;
     @Min(1)
     private Long duration;
-    private Long likesCounter = 0L;
     @NotNull
     private Mpa mpa;
     @NotNull

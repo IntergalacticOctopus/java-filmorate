@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.mapper.FilmListMapper;
-import ru.yandex.practicum.filmorate.storage.mapper.GenreMapper;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -142,5 +141,6 @@ public class JdbcFilmStorage implements FilmStorage {
         deleteGenres(filmId);
         addGenres(filmId, genres);
     }
+
 
 }
