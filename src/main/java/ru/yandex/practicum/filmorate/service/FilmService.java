@@ -18,8 +18,6 @@ import ru.yandex.practicum.filmorate.storage.db.user.UserStorage;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.lang.System.in;
-
 @Slf4j
 @Service
 public class FilmService {
