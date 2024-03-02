@@ -19,7 +19,6 @@ public class JdbcFriendStorage implements FriendStorage {
     @Override
     public void add(Long userId, Long friendId) {
         String insertQuery = "INSERT INTO friends (user_id, friend_id, is_friend) VALUES (:user_id, :friend_id, :is_friend)";
-
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("user_id", userId)
                 .addValue("friend_id", friendId)
