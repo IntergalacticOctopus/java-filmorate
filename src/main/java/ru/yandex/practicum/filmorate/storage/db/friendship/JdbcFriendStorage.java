@@ -31,7 +31,8 @@ public class JdbcFriendStorage implements FriendStorage {
     public void removeFriend(Long userId, Long friendId) {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("user_id", userId)
-                .addValue("friend_id", friendId);
+                .addValue("friend_id", friendId)
+                .addValue("is_friend", false);;
 
         namedParameterJdbcTemplate.update("DELETE FROM friends WHERE user_id = :user_id AND friend_id = :friend_id",
                 params);
