@@ -13,6 +13,4 @@ public interface UserStorage {
 
     List<User> getAll();
 
-    boolean isContains(Long id);
-
 }

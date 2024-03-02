@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-public class FilmListMapper implements ResultSetExtractor<List<Film>> {
+public class FilmExtractor implements ResultSetExtractor<List<Film>> {
 
     @Override
     public List<Film> extractData(ResultSet rs) throws SQLException {

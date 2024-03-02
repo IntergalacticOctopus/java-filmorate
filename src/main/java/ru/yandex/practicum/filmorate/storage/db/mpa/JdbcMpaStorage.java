@@ -23,7 +23,7 @@ public class JdbcMpaStorage implements MpaStorage {
         params.addValue("mpaId", id);
         List<Mpa> mpa = namedParameterJdbcTemplate.query(sql, params, new MpaMapper());
         if (mpa.isEmpty()) {
-            throw new NotFoundException("Mpa not found");
+            return null;
         } else {
             return mpa.get(0);
         }

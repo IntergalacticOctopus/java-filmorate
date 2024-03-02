@@ -16,13 +16,13 @@ import java.util.List;
 public class UserService {
     private final Validatable validateService;
     private final UserStorage userStorage;
-    private final FriendStorage friendshioDbStorage;
+    private final FriendStorage friendStorage;
 
     @Autowired
-    public UserService(Validatable validateService, JdbcUserStorage userStorage, FriendStorage friendshioDbStorage) {
+    public UserService(Validatable validateService, UserStorage userStorage, FriendStorage friendStorage) {
         this.validateService = validateService;
         this.userStorage = userStorage;
-        this.friendshioDbStorage = friendshioDbStorage;
+        this.friendStorage = friendStorage;
     }
 
     public User create(User user) {
@@ -67,23 +67,23 @@ public class UserService {
         }
         isUserExist(userId);
         isUserExist(friendId);
-        friendshioDbStorage.add(userId, friendId, true);
+        friendStorage.add(userId, friendId, true);
     }
 
     public void removeFriend(Long userId, Long friendId) {
         getById(userId);
         getById(friendId);
-        friendshioDbStorage.removeFriend(userId, friendId);
+        friendStorage.removeFriend(userId, friendId);
     }
 
     public List<User> getFriendsList(Long userId) {
         isUserExist(userId);
-        return friendshioDbStorage.getFriends(userId);
+        return friendStorage.getFriends(userId);
     }
 
     public List<User> getCommonFriends(Long userId, Long friendId) {
         isUserExist(userId);
         isUserExist(friendId);
-        return friendshioDbStorage.getCommonFriends(userId, friendId);
+        return friendStorage.getCommonFriends(userId, friendId);
     }
 }

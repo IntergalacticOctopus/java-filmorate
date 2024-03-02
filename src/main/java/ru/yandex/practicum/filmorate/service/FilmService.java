@@ -6,41 +6,66 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.controller.ValidateService;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.db.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.db.genre.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.db.genre.JdbcGenreStorage;
 import ru.yandex.practicum.filmorate.storage.db.like.LikeStorage;
 import ru.yandex.practicum.filmorate.storage.db.mpa.MpaStorage;
 import ru.yandex.practicum.filmorate.storage.db.user.JdbcUserStorage;
 import ru.yandex.practicum.filmorate.storage.db.user.UserStorage;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.lang.System.in;
 
 @Slf4j
 @Service
 public class FilmService {
     private final FilmStorage filmStorage;
+    private final GenreStorage genreStorage;
     private final UserStorage userStorage;
-    private final MpaStorage mpaStorage;
     private final LikeStorage likeStorage;
     private final ValidateService validateService;
 
     @Autowired
-    public FilmService(ru.yandex.practicum.filmorate.storage.db.film.JdbcFilmStorage filmStorage, JdbcUserStorage userStorage, MpaStorage mpaStorage, LikeStorage likeStorage, ValidateService validateService) {
+    public FilmService(ru.yandex.practicum.filmorate.storage.db.film.JdbcFilmStorage filmStorage, JdbcUserStorage userStorage, MpaStorage mpaStorage, LikeStorage likeStorage, ValidateService validateService, JdbcGenreStorage genreStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
-        this.mpaStorage = mpaStorage;
         this.likeStorage = likeStorage;
         this.validateService = validateService;
+        this.genreStorage = genreStorage;
     }
 
     public Film create(Film film) {
+
+        //isGenreExist(film.getGenres());
         validateService.validate(film);
         return filmStorage.create(film);
     }
 
     public Film update(Film film) {
+        List <Genre> genres = getStorageGenre(film.getGenres());
+        if (genres.size() != film.getGenres().size()) {
+            throw new NotFoundException("Some genres not found");
+        }
+
         isFilmExist(film.getId());
+
         validateService.validate(film);
         return filmStorage.update(film);
+    }
+    private List getStorageGenre(Set<Genre> genreSet) {
+        List <Genre> returnList = new ArrayList<>();
+        List<Genre> list = genreStorage.getAll();
+
+        for (Genre genre : genreSet) {
+            if (list.contains(genre)) {
+                returnList.add(genre);
+            }
+        }
+        return returnList;
     }
 
     public List<Film> getAll() {
@@ -82,7 +107,7 @@ public class FilmService {
         if (film == null) {
             throw new NotFoundException("Film not found");
         }
-        if (!userStorage.isContains(userId)) {
+        if (filmStorage.getById(userId) == null) {
             throw new NotFoundException("User not found");
         }
         likeStorage.remove(id, userId);

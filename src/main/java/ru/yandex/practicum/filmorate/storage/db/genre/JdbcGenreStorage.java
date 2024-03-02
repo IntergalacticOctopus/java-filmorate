@@ -24,7 +24,7 @@ public class JdbcGenreStorage implements GenreStorage {
         params.addValue("genreId", id);
         List<Genre> genre = namedParameterJdbcTemplate.query(sql, params, new GenreMapper());
         if (genre.isEmpty()) {
-            throw new NotFoundException("Genre not found");
+            return null;
         } else {
             return genre.get(0);
         }

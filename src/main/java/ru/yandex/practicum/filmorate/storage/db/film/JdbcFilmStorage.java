@@ -9,7 +9,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.storage.mapper.FilmListMapper;
+import ru.yandex.practicum.filmorate.storage.mapper.FilmExtractor;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -74,7 +74,7 @@ public class JdbcFilmStorage implements FilmStorage {
                 "LEFT JOIN mpa AS m ON f.mpa_id=m.mpaId " +
                 "GROUP BY f.film_id ORDER BY f.film_id";
 
-        List<Film> films = namedParameterJdbcTemplate.query(selectQuery, new FilmListMapper());
+        List<Film> films = namedParameterJdbcTemplate.query(selectQuery, new FilmExtractor());
 
         return films;
     }
@@ -92,7 +92,7 @@ public class JdbcFilmStorage implements FilmStorage {
                 "LIMIT :count ";
 
         MapSqlParameterSource params = new MapSqlParameterSource().addValue("count", count);
-        List<Film> films = namedParameterJdbcTemplate.query(selectQuery, params, new FilmListMapper());
+        List<Film> films = namedParameterJdbcTemplate.query(selectQuery, params, new FilmExtractor());
         return films;
     }
 
@@ -108,7 +108,7 @@ public class JdbcFilmStorage implements FilmStorage {
 
         MapSqlParameterSource params = new MapSqlParameterSource().addValue("film_id", id);
 
-        List<Film> films = namedParameterJdbcTemplate.query(selectQuery, params, new FilmListMapper());
+        List<Film> films = namedParameterJdbcTemplate.query(selectQuery, params, new FilmExtractor());
 
         if (films.isEmpty()) {
             return null;

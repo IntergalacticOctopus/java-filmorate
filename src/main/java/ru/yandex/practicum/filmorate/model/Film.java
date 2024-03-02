@@ -3,10 +3,7 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -29,5 +26,6 @@ public class Film {
     private Mpa mpa;
     @NotNull
     @Builder.Default
+    @NonNull
     private Set<Genre> genres = new LinkedHashSet<>();
 }

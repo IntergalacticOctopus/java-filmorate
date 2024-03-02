@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -21,9 +23,10 @@ public class JdbcUserStorage implements UserStorage {
 
     @Override
     public User create(User user) {
-        log.debug("createUser({})", user);
+        String insertQuery = "INSERT INTO users (email, login, name, birthday) " +
+                "VALUES (:email, :login, :name, :birthday)";
 
-        String insertQuery = "INSERT INTO users (email, login, name, birthday) VALUES (:email, :login, :name, :birthday)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
 
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("email", user.getEmail())
@@ -31,21 +34,17 @@ public class JdbcUserStorage implements UserStorage {
                 .addValue("name", user.getName())
                 .addValue("birthday", Date.valueOf(user.getBirthday()));
 
-        namedParameterJdbcTemplate.update(insertQuery, params);
+        namedParameterJdbcTemplate.update(insertQuery, params, keyHolder, new String[]{"user_id"});
 
-        String selectQuery = "SELECT user_id, email, login, name, birthday FROM users WHERE email = :email";
+        Number generatedUserId = (Number) keyHolder.getKeys().get("user_id");
+        user.setId(generatedUserId != null ? generatedUserId.longValue() : null);
 
-        User thisUser = namedParameterJdbcTemplate.queryForObject(selectQuery, params, new UserMapper());
-
-        log.trace("{} user was added to the data base", thisUser);
-
-        return thisUser;
+        return user;
     }
 
     @Override
     public User update(User user) {
         getById(user.getId());
-        log.debug("updateUser({})", user);
 
         String updateQuery = "UPDATE users SET email=:email, login=:login, name=:name, birthday=:birthday WHERE user_id=:id";
 
@@ -58,11 +57,7 @@ public class JdbcUserStorage implements UserStorage {
 
         namedParameterJdbcTemplate.update(updateQuery, params);
 
-        User thisUser = getById(user.getId());
-
-        log.trace("The user {} was updated in the database", thisUser);
-
-        return thisUser;
+        return getById(user.getId());
     }
 
     @Override
@@ -73,7 +68,7 @@ public class JdbcUserStorage implements UserStorage {
         List<User> returnedUser = namedParameterJdbcTemplate.query(sql, params, new UserMapper());
 
         if (returnedUser.isEmpty()) {
-            throw new NotFoundException("User not found");
+            return null;
         } else {
             return returnedUser.get(0);
         }
@@ -81,27 +76,9 @@ public class JdbcUserStorage implements UserStorage {
 
     @Override
     public List<User> getAll() {
-        log.debug("getUsers()");
-
         List<User> users = namedParameterJdbcTemplate.query(
                 "SELECT user_id, email, login, name, birthday FROM users",
                 new UserMapper());
-
-        log.trace("These are users in the database: {}", users);
-
         return users;
-    }
-
-    @Override
-    public boolean isContains(Long id) {
-        log.debug("isContains({})", id);
-        try {
-            getById(id);
-            log.trace("The user with id {} was found", id);
-            return true;
-        } catch (EmptyResultDataAccessException exception) {
-            log.trace("No information was found for user with id {}", id);
-            return false;
-        }
     }
 }
