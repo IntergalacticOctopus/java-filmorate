@@ -39,16 +39,18 @@ public class FilmService {
     }
 
     public Film create(Film film) {
-
-        //isGenreExist(film.getGenres());
+        List<Genre> genres = genreStorage.getStorageIds(film.getGenres().stream().map(g -> g.getId()).collect(Collectors.toList()));
+        if (genres.size() != film.getGenres().size()) {
+            throw new NotFoundException("Genres not found");
+        }
         validateService.validate(film);
         return filmStorage.create(film);
     }
 
     public Film update(Film film) {
-        List <Genre> genres = getStorageGenre(film.getGenres());
+        List<Genre> genres = genreStorage.getStorageIds(film.getGenres().stream().map(g -> g.getId()).collect(Collectors.toList()));
         if (genres.size() != film.getGenres().size()) {
-            throw new NotFoundException("Some genres not found");
+            throw new NotFoundException("Genres not found");
         }
 
         isFilmExist(film.getId());

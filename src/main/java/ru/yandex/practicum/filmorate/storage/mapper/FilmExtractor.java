@@ -28,7 +28,7 @@ public class FilmExtractor implements ResultSetExtractor<List<Film>> {
                 currentFilm.setReleaseDate(rs.getDate("release_date").toLocalDate());
                 currentFilm.setDuration(rs.getLong("duration"));
                 currentFilm.setMpa(new Mpa(rs.getLong("mpaId"), rs.getString("mpaName")));
-                currentFilm.setGenres(new HashSet<>());
+                currentFilm.setGenres(new LinkedHashSet<>());
 
                 filmMap.put(filmId, currentFilm);
                 films.add(currentFilm);

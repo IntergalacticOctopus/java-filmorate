@@ -26,6 +26,5 @@ public class Film {
     private Mpa mpa;
     @NotNull
     @Builder.Default
-    @NonNull
-    private Set<Genre> genres = new LinkedHashSet<>();
+    private LinkedHashSet<@NotNull Genre> genres = new LinkedHashSet<>();
 }
