@@ -38,6 +38,7 @@ public class JdbcGenreStorage implements GenreStorage {
                 new GenreMapper());
         return list;
     }
+
     @Override
     public List<Genre> getStorageIds(List<Long> ids) {
         if (ids.isEmpty()) {
