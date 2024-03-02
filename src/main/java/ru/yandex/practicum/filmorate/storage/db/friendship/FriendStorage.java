@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface FriendStorage {
 
-    void add(Long userId, Long friendId);
+    void add(Long userId, Long friendId, boolean isFriend);
 
     void removeFriend(Long userId, Long friendId);
 
