@@ -188,8 +188,9 @@ public class JdbcFilmStorageTest {
         likeStorage.add(2L, 3L);
         likeStorage.add(2L, 2L);
         List<Film> list = new ArrayList<>();
-        list.add(secondCorrectFilm);
+
         list.add(correctFilm);
+        list.add(secondCorrectFilm);
         assertEquals(list, filmStorage.getPopularFilms(2));
     }
 }

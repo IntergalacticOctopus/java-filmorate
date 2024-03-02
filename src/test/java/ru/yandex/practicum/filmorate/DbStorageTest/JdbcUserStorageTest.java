@@ -27,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class JdbcUserStorageTest {
     @Autowired
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
     private final JdbcTemplate jdbcTemplate;
     JdbcFilmStorage filmStorage;
     JdbcUserStorage userStorage;

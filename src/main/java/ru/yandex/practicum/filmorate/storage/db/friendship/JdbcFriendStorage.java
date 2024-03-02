@@ -56,17 +56,18 @@ public class JdbcFriendStorage implements FriendStorage {
     @Override
     public List<User> getCommonFriends(Long id, Long otherId) {
         String sql = "SELECT u.* FROM users AS u " +
-                "LEFT JOIN friends AS f ON u.user_id=f.friend_id " +
-                "WHERE f.user_id=:user_id";
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("user_id", id);
-        List<User> firstUserFriends = namedParameterJdbcTemplate.query(sql, params, new UserMapper());
-        params.addValue("user_id", otherId);
-        List<User> secondUserFriends = namedParameterJdbcTemplate.query(sql, params, new UserMapper());
-        List<User> resultList = secondUserFriends.stream().filter(firstUserFriends::contains)
-                .filter(secondUserFriends::contains)
-                .collect(Collectors.toList());
-        return resultList;
+                "LEFT JOIN friends AS f1 ON u.user_id = f1.friend_id AND f1.user_id = :userId " +
+                "LEFT JOIN friends AS f2 ON u.user_id = f2.friend_id AND f2.user_id = :otherUserId " +
+                "GROUP BY u.user_id " +
+                "HAVING COUNT(f1.friend_id) > 0 AND COUNT(f2.friend_id) > 0";
+
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("userId", id)
+                .addValue("otherUserId", otherId);
+
+        List<User> commonFriends = namedParameterJdbcTemplate.query(sql, params, new UserMapper());
+
+        return commonFriends;
     }
 
 }

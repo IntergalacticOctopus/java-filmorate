@@ -20,6 +20,7 @@ import ru.yandex.practicum.filmorate.storage.db.user.UserStorage;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -99,13 +100,14 @@ public class JdbcLikeStorageTest {
         likeStorage.add(1L, 1L);
         likeStorage.add(1L, 2L);
         List<Film> list = new ArrayList<>();
-
         list.add(secondCorrectFilm);
         list.add(correctFilm);
+
         assertEquals(list, filmStorage.getPopularFilms(2));
 
         likeStorage.remove(1L, 1L);
         likeStorage.remove(1L, 2L);
+        Collections.reverse(list);
 
         assertEquals(list, filmStorage.getPopularFilms(2));
     }
