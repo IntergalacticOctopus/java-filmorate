@@ -58,8 +58,9 @@ public class FilmService {
         validateService.validate(film);
         return filmStorage.update(film);
     }
+
     private List getStorageGenre(Set<Genre> genreSet) {
-        List <Genre> returnList = new ArrayList<>();
+        List<Genre> returnList = new ArrayList<>();
         List<Genre> list = genreStorage.getAll();
 
         for (Genre genre : genreSet) {
