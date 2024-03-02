@@ -67,7 +67,7 @@ public class UserService {
         }
         isUserExist(userId);
         isUserExist(friendId);
-        friendshioDbStorage.add(userId, friendId, true);
+        friendshioDbStorage.add(userId, friendId);
     }
 
     public void removeFriend(Long userId, Long friendId) {

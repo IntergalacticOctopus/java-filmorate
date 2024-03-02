@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.mapper.UserMapper;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
