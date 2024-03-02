@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.db.friendship.FriendStorage;
-import ru.yandex.practicum.filmorate.storage.db.user.JdbcUserStorage;
 import ru.yandex.practicum.filmorate.storage.db.user.UserStorage;
 
 import java.util.List;
