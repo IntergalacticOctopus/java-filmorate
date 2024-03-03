@@ -54,7 +54,6 @@ CREATE TABLE IF NOT EXISTS likes (
 CREATE TABLE IF NOT EXISTS friends (
     PRIMARY KEY (user_id, friend_id),
     user_id BIGINT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
-    friend_id BIGINT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
-    is_friend BOOLEAN NOT NULL
+    friend_id BIGINT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE
 );
 

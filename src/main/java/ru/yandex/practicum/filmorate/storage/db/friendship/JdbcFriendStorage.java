@@ -17,12 +17,11 @@ public class JdbcFriendStorage implements FriendStorage {
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
-    public void add(Long userId, Long friendId, boolean isFriend) {
-        String insertQuery = "INSERT INTO friends (user_id, friend_id, is_friend) VALUES (:user_id, :friend_id, :is_friend)";
+    public void add(Long userId, Long friendId) {
+        String insertQuery = "INSERT INTO friends (user_id, friend_id) VALUES (:user_id, :friend_id)";
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("user_id", userId)
-                .addValue("friend_id", friendId)
-                .addValue("is_friend", isFriend);
+                .addValue("friend_id", friendId);
 
         namedParameterJdbcTemplate.update(insertQuery, params);
     }

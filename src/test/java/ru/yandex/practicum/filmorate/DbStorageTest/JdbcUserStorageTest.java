@@ -5,13 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.db.film.JdbcFilmStorage;
-import ru.yandex.practicum.filmorate.storage.db.like.JdbcLikeStorage;
 import ru.yandex.practicum.filmorate.storage.db.user.JdbcUserStorage;
 
 import java.time.LocalDate;
@@ -23,14 +19,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @JdbcTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class JdbcUserStorageTest {
     @Autowired
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private final JdbcTemplate jdbcTemplate;
-    JdbcFilmStorage filmStorage;
     JdbcUserStorage userStorage;
-    JdbcLikeStorage likeStorage;
     User firstUser;
     User secondUser;
     User thirdUser;
@@ -38,9 +30,7 @@ class JdbcUserStorageTest {
 
     @BeforeEach
     protected void beforeEach() {
-        filmStorage = new JdbcFilmStorage(namedParameterJdbcTemplate);
         userStorage = new JdbcUserStorage(namedParameterJdbcTemplate);
-        likeStorage = new JdbcLikeStorage(jdbcTemplate);
 
         firstUser = new User();
         firstUser.setName("name1");
@@ -96,9 +86,9 @@ class JdbcUserStorageTest {
         userStorage.create(secondUser);
         userStorage.create(thirdUser);
         List<User> list = new ArrayList<>();
-        firstUser.setId(1L);
-        secondUser.setId(2L);
-        thirdUser.setId(3L);
+        firstUser.setId(3L);
+        secondUser.setId(4L);
+        thirdUser.setId(5L);
         list.add(firstUser);
         list.add(secondUser);
         list.add(thirdUser);

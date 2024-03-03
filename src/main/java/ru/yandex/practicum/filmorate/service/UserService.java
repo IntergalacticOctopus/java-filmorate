@@ -66,7 +66,7 @@ public class UserService {
         }
         getExistingUser(userId);
         getExistingUser(friendId);
-        friendStorage.add(userId, friendId, true);
+        friendStorage.add(userId, friendId);
     }
 
     public void removeFriend(Long userId, Long friendId) {

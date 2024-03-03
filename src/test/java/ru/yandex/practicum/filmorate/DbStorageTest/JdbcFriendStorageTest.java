@@ -19,12 +19,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @JdbcTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+//На этой аннотации завязана логика тестов
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class JdbcFriendStorageTest {
     @Autowired
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
     JdbcFriendStorage friendStorage;
+    //userStorage нужно для тестов дружбы
     JdbcUserStorage userStorage;
     User firstUser;
     User secondUser;
@@ -62,8 +63,8 @@ public class JdbcFriendStorageTest {
         userStorage.create(firstUser);
         User user2 = userStorage.create(secondUser);
         User user3 = userStorage.create(thirdUser);
-        friendStorage.add(1L, 2L, true);
-        friendStorage.add(1L, 3L, true);
+        friendStorage.add(1L, 2L);
+        friendStorage.add(1L, 3L);
         List<User> list = new ArrayList<>();
         list.add(userStorage.getById(user2.getId()));
         list.add(userStorage.getById(user3.getId()));
@@ -75,8 +76,8 @@ public class JdbcFriendStorageTest {
         userStorage.create(firstUser);
         User user2 = userStorage.create(secondUser);
         User user3 = userStorage.create(thirdUser);
-        friendStorage.add(1L, 2L, true);
-        friendStorage.add(1L, 3L, true);
+        friendStorage.add(1L, 2L);
+        friendStorage.add(1L, 3L);
         List<User> list = new ArrayList<>();
         list.add(userStorage.getById(user2.getId()));
         list.add(userStorage.getById(user3.getId()));
@@ -91,8 +92,8 @@ public class JdbcFriendStorageTest {
         userStorage.create(firstUser);
         User user2 = userStorage.create(secondUser);
         userStorage.create(thirdUser);
-        friendStorage.add(1L, 2L, true);
-        friendStorage.add(3L, 2L, true);
+        friendStorage.add(1L, 2L);
+        friendStorage.add(3L, 2L);
         List<User> list = new ArrayList<>();
         list.add(user2);
         assertEquals(list, friendStorage.getCommonFriends(1L, 3L));

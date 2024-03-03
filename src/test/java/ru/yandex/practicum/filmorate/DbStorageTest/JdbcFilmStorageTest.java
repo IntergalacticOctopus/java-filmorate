@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @JdbcTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+//На этой аннотации завязана логика тестов
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class JdbcFilmStorageTest {
 
@@ -33,6 +34,7 @@ public class JdbcFilmStorageTest {
 
     private final JdbcTemplate jdbcTemplate;
     JdbcFilmStorage filmStorage;
+    //Нужны для тестов getPopular
     JdbcUserStorage userStorage;
     JdbcLikeStorage likeStorage;
     Film correctFilm;
