@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JdbcFriendStorageTest {
     @Autowired
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
     JdbcFriendStorage friendStorage;
     JdbcUserStorage userStorage;
     User firstUser;
