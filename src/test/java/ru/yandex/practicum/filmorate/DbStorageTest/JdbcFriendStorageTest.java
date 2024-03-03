@@ -19,13 +19,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @JdbcTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-//На этой аннотации завязана логика тестов
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class JdbcFriendStorageTest {
     @Autowired
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     JdbcFriendStorage friendStorage;
-    //userStorage нужно для тестов дружбы
     JdbcUserStorage userStorage;
     User firstUser;
     User secondUser;
