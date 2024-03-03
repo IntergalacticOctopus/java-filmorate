@@ -68,9 +68,8 @@ public class JdbcUserStorage implements UserStorage {
 
         if (returnedUser.isEmpty()) {
             return null;
-        } else {
-            return returnedUser.get(0);
         }
+        return returnedUser.get(0);
     }
 
     @Override

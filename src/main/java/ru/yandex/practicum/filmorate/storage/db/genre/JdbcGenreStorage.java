@@ -27,9 +27,8 @@ public class JdbcGenreStorage implements GenreStorage {
         List<Genre> genre = namedParameterJdbcTemplate.query(sql, params, new GenreMapper());
         if (genre.isEmpty()) {
             return null;
-        } else {
-            return genre.get(0);
         }
+        return genre.get(0);
     }
 
     @Override
@@ -40,7 +39,7 @@ public class JdbcGenreStorage implements GenreStorage {
     }
 
     @Override
-    public List<Genre> getStorageIds(List<Long> ids) {
+    public List<Genre> getIds(List<Long> ids) {
         if (ids.isEmpty()) {
             return Collections.emptyList();
         }

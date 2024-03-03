@@ -26,6 +26,7 @@ public class FilmService {
     private final UserStorage userStorage;
     private final LikeStorage likeStorage;
     private final ValidateService validateService;
+    private final MpaStorage mpaStorage;
 
     @Autowired
     public FilmService(ru.yandex.practicum.filmorate.storage.db.film.JdbcFilmStorage filmStorage, JdbcUserStorage userStorage, MpaStorage mpaStorage, LikeStorage likeStorage, ValidateService validateService, JdbcGenreStorage genreStorage) {
@@ -34,39 +35,33 @@ public class FilmService {
         this.likeStorage = likeStorage;
         this.validateService = validateService;
         this.genreStorage = genreStorage;
+        this.mpaStorage = mpaStorage;
     }
 
     public Film create(Film film) {
-        List<Genre> genres = genreStorage.getStorageIds(film.getGenres().stream().map(g -> g.getId()).collect(Collectors.toList()));
+        validateService.validate(film);
+        List<Genre> genres = genreStorage.getIds(film.getGenres().stream().map(g -> g.getId()).collect(Collectors.toList()));
         if (genres.size() != film.getGenres().size()) {
             throw new NotFoundException("Genres not found");
         }
-        validateService.validate(film);
+        if (mpaStorage.getById(film.getMpa().getId()) == null) {
+            throw new NotFoundException("mpa not found");
+        }
         return filmStorage.create(film);
     }
 
     public Film update(Film film) {
-        List<Genre> genres = genreStorage.getStorageIds(film.getGenres().stream().map(g -> g.getId()).collect(Collectors.toList()));
+        validateService.validate(film);
+        List<Genre> genres = genreStorage.getIds(film.getGenres().stream().map(g -> g.getId()).collect(Collectors.toList()));
         if (genres.size() != film.getGenres().size()) {
             throw new NotFoundException("Genres not found");
         }
 
         isFilmExist(film.getId());
-
-        validateService.validate(film);
-        return filmStorage.update(film);
-    }
-
-    private List getStorageGenre(Set<Genre> genreSet) {
-        List<Genre> returnList = new ArrayList<>();
-        List<Genre> list = genreStorage.getAll();
-
-        for (Genre genre : genreSet) {
-            if (list.contains(genre)) {
-                returnList.add(genre);
-            }
+        if (mpaStorage.getById(film.getMpa().getId()) == null) {
+            throw new NotFoundException("mpa not found");
         }
-        return returnList;
+        return filmStorage.update(film);
     }
 
     public List<Film> getAll() {
@@ -86,7 +81,7 @@ public class FilmService {
         return film;
     }
 
-    public List<Film> getMovieRating(Long count) {
+    public List<Film> getPopular(Long count) {
         List<Film> films = filmStorage.getPopularFilms(count);
         return films;
     }

@@ -32,7 +32,7 @@ public class UserService {
 
     public User update(User user) {
         validateService.validate(user);
-        isUserExist(user.getId());
+        getExistingUser(user.getId());
         toCorrectName(user);
         return userStorage.update(user);
     }
@@ -48,11 +48,11 @@ public class UserService {
     }
 
     public User getById(Long id) {
-        User user = isUserExist(id);
+        User user = getExistingUser(id);
         return user;
     }
 
-    private User isUserExist(long id) {
+    private User getExistingUser(long id) {
         User user = userStorage.getById(id);
         if (user == null) {
             throw new NotFoundException("User" + user + "not exist");
@@ -64,8 +64,8 @@ public class UserService {
         if (userId == friendId) {
             throw new ValidationException("userId == friendId");
         }
-        isUserExist(userId);
-        isUserExist(friendId);
+        getExistingUser(userId);
+        getExistingUser(friendId);
         friendStorage.add(userId, friendId, true);
     }
 
@@ -76,13 +76,13 @@ public class UserService {
     }
 
     public List<User> getFriendsList(Long userId) {
-        isUserExist(userId);
+        getExistingUser(userId);
         return friendStorage.getFriends(userId);
     }
 
     public List<User> getCommonFriends(Long userId, Long friendId) {
-        isUserExist(userId);
-        isUserExist(friendId);
+        getExistingUser(userId);
+        getExistingUser(friendId);
         return friendStorage.getCommonFriends(userId, friendId);
     }
 }

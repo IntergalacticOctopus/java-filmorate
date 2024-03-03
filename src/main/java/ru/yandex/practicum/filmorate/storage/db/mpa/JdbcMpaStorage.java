@@ -23,9 +23,8 @@ public class JdbcMpaStorage implements MpaStorage {
         List<Mpa> mpa = namedParameterJdbcTemplate.query(sql, params, new MpaMapper());
         if (mpa.isEmpty()) {
             return null;
-        } else {
-            return mpa.get(0);
         }
+        return mpa.get(0);
     }
 
     @Override

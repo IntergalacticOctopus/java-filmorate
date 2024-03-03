@@ -15,13 +15,9 @@ import java.time.LocalDate;
 @Component
 @AllArgsConstructor
 public class ValidateService implements Validatable {
-    private final MpaStorage mpaStorage;
     private final LocalDate startReleaseDate = LocalDate.of(1895, 12, 28);
 
     public void validate(Film film) {
-        if (mpaStorage.getById(film.getMpa().getId()) == null) {
-            throw new NotFoundException("mpa not found");
-        }
         if (film.getName().isBlank()) {
             throw new ValidationException("Film name is invalid");
         }

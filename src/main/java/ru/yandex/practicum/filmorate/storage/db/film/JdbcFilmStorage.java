@@ -112,9 +112,8 @@ public class JdbcFilmStorage implements FilmStorage {
 
         if (films.isEmpty()) {
             return null;
-        } else {
-            return films.get(0);
         }
+        return films.get(0);
     }
 
     private void addGenres(Long filmId, Set<Genre> genres) {

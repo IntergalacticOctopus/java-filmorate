@@ -9,5 +9,5 @@ public interface GenreStorage {
 
     List<Genre> getAll();
 
-    List<Genre> getStorageIds(List<Long> ids);
+    List<Genre> getIds(List<Long> ids);
 }
