@@ -1,3 +1,11 @@
+merge into genres (genreId, genreName)
+    values (1, 'Комедия'),
+    (2, 'Драма'),
+    (3, 'Мультфильм'),
+    (4, 'Триллер'),
+    (5, 'Документальный'),
+    (6, 'Боевик');
+
 merge into mpa (mpaId, mpaName)
     values (1, 'G'),
     (2, 'PG'),
