@@ -24,6 +24,7 @@ class JdbcUserStorageTest {
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     JdbcUserStorage userStorage;
     User firstUser;
+
     User secondUser;
     User thirdUser;
     User incorrectUser;
