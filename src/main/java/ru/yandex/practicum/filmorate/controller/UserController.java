@@ -4,8 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import lombok.RequiredArgsConstructor;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -13,16 +12,15 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
-    Validatable validateService = new ValidateService();
-    UserStorage inMemoryUserStorage = new InMemoryUserStorage(validateService);
-    private final UserService userService = new UserService(validateService, inMemoryUserStorage);
-
+    private final ValidateService validateService;
+    private final UserService userService;
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
         log.info("Creating user {}", user);
-        user = userService.createUser(user);
+        user = userService.create(user);
         log.info("Created user {}", user);
         return user;
     }
@@ -31,7 +29,7 @@ public class UserController {
     public User update(@Valid @RequestBody User user) {
         log.info("Updating user {}", user);
         validateService.validate(user);
-        User returnUser = userService.updateUser(user);
+        User returnUser = userService.update(user);
         log.info("Updated user {}", user);
         return returnUser;
     }
@@ -46,9 +44,9 @@ public class UserController {
 
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id) {
+    public User getById(@PathVariable Long id) {
         log.info("Getting user {}", id);
-        User returnUser = userService.getUserById(id);
+        User returnUser = userService.getById(id);
         log.info("Get user {}", returnUser);
         return returnUser;
     }

@@ -6,11 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.yandex.practicum.filmorate.exception.InternalServiceException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-
-import java.util.Map;
+import ru.yandex.practicum.filmorate.model.ErrorResponse;
 
 
 @RestControllerAdvice
@@ -19,24 +17,29 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> handleNotFoundException(final NotFoundException exception) {
-        log.info("Data not found {}", exception.getMessage());
-        return Map.of("Data not found", exception.getMessage());
+    public ErrorResponse handleNotFoundException(final NotFoundException exception) {
+        log.error("Data not found ", exception);
+        String stacktrace = ExceptionUtils.getStackTrace(exception);
+        String errorMessage = "Data not found error: " + exception.getMessage() + stacktrace;
+        return new ErrorResponse(errorMessage);
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleValidationException(final ValidationException exception) {
-        log.info("Validation error {}", exception.getMessage());
-        return Map.of("Validation error ", exception.getMessage());
+    public ErrorResponse handleValidationException(final ValidationException exception) {
+        log.error("Validation error ", exception);
+        String stacktrace = ExceptionUtils.getStackTrace(exception);
+        String errorMessage = "Validation found error: " + exception.getMessage() + stacktrace;
+        return new ErrorResponse(errorMessage);
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorModel handleInternalServiceException(final InternalServiceException exception) {
-        log.info("Server error {}", exception.getMessage());
+    public ErrorResponse handleInternalServiceException(final Exception exception) {
+        log.error("Server error ", exception);
         String stacktrace = ExceptionUtils.getStackTrace(exception);
-        return new ErrorModel("Server error: " + exception.getMessage(), stacktrace);
+        String errorMessage = "InternalService error: " + exception.getMessage() + stacktrace;
+        return new ErrorResponse(errorMessage);
     }
 }
 

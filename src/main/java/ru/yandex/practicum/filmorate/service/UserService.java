@@ -6,7 +6,8 @@ import ru.yandex.practicum.filmorate.controller.Validatable;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.db.friendship.FriendStorage;
+import ru.yandex.practicum.filmorate.storage.db.user.UserStorage;
 
 import java.util.List;
 
@@ -14,67 +15,74 @@ import java.util.List;
 public class UserService {
     private final Validatable validateService;
     private final UserStorage userStorage;
-
+    private final FriendStorage friendStorage;
 
     @Autowired
-    public UserService(Validatable validateService, UserStorage userStorage) {
+    public UserService(Validatable validateService, UserStorage userStorage, FriendStorage friendStorage) {
         this.validateService = validateService;
         this.userStorage = userStorage;
+        this.friendStorage = friendStorage;
     }
 
-    ;
-
-    public User createUser(User user) {
+    public User create(User user) {
         validateService.validate(user);
-        return userStorage.createUser(user);
+        toCorrectName(user);
+        return userStorage.create(user);
     }
 
-    public User updateUser(User user) {
-        isUserExist(user.getId());
+    public User update(User user) {
         validateService.validate(user);
-        return userStorage.updateUser(user);
+        getExistingUser(user.getId());
+        toCorrectName(user);
+        return userStorage.update(user);
+    }
+
+    public void toCorrectName(User user) {
+        if (user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
     }
 
     public List<User> getAll() {
         return userStorage.getAll();
     }
 
-    public User getUserById(Long id) {
-        isUserExist(id);
-        return userStorage.getUserById(id);
+    public User getById(Long id) {
+        User user = getExistingUser(id);
+        return user;
     }
 
-    private void isUserExist(long id) {
-        User user = userStorage.getUserById(id);
+    private User getExistingUser(long id) {
+        User user = userStorage.getById(id);
         if (user == null) {
-            throw new NotFoundException("This user" + user + "does not exist ");
+            throw new NotFoundException("User" + user + "not exist");
         }
+        return user;
     }
 
     public void addFriend(Long userId, Long friendId) {
         if (userId == friendId) {
             throw new ValidationException("userId == friendId");
         }
-
-        isUserExist(userId);
-        isUserExist(friendId);
-        userStorage.addFriend(userId, friendId);
+        getExistingUser(userId);
+        getExistingUser(friendId);
+        friendStorage.add(userId, friendId);
     }
 
     public void removeFriend(Long userId, Long friendId) {
-        getUserById(userId);
-        getUserById(friendId);
-        userStorage.removeFriend(userId, friendId);
+        getById(userId);
+        getById(friendId);
+        friendStorage.removeFriend(userId, friendId);
     }
 
     public List<User> getFriendsList(Long userId) {
-        isUserExist(userId);
-        return userStorage.getFriendsList(userId);
+        getExistingUser(userId);
+        return friendStorage.getFriends(userId);
     }
 
     public List<User> getCommonFriends(Long userId, Long friendId) {
-        isUserExist(userId);
-        isUserExist(friendId);
-        return userStorage.getCommonFriends(userId, friendId);
+        getExistingUser(userId);
+        getExistingUser(friendId);
+        return friendStorage.getCommonFriends(userId, friendId);
     }
 }

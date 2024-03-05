@@ -1,32 +1,27 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/films")
+@RequiredArgsConstructor
 public class FilmController {
 
-    private final Validatable validateService = new ValidateService();
-    private final FilmStorage inMemoryFilmStorage = new InMemoryFilmStorage();
-    private final UserStorage inMemoryUserStorage = new InMemoryUserStorage(validateService);
-    private final FilmService filmService = new FilmService(validateService, inMemoryFilmStorage, inMemoryUserStorage);
-
+    private final FilmService filmService;
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
         log.info("Creating film {}", film);
-        film = filmService.createFilm(film);
+        film = filmService.create(film);
         log.info("Film {} created", film);
         return film;
     }
@@ -34,7 +29,7 @@ public class FilmController {
     @PutMapping
     public Film update(@Valid @RequestBody Film film) {
         log.info("Updating film {}", film);
-        Film returnFilm = filmService.updateFilm(film);
+        Film returnFilm = filmService.update(film);
         log.info("Film {} updated", film);
         return returnFilm;
     }
@@ -51,7 +46,7 @@ public class FilmController {
     @GetMapping("/{id}")
     public Film getFilmById(@PathVariable Long id) {
         log.info("Getting films by id {}", id);
-        Film returnfilm = filmService.getFilmById(id);
+        Film returnfilm = filmService.getById(id);
         log.info("Get films by id {}", id);
         return returnfilm;
     }
@@ -59,7 +54,7 @@ public class FilmController {
     @PutMapping("/{id}/like/{userId}")
     public Film addLike(@PathVariable Long id, @PathVariable Long userId) {
         log.info("Liking film {} by user {}", id, userId);
-        Film film = filmService.addLike(userId, id);
+        Film film = filmService.like(userId, id);
         log.info("Liked film {} by user {}", id, userId);
         return film;
     }
@@ -73,9 +68,9 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public List<Film> getMovieRatings(@RequestParam(defaultValue = "10") Long count) {
+    public List<Film> getMovieRatings(@RequestParam(defaultValue = "10") @Min(1) Long count) {
         log.info("Getting movie rating with {} count", count);
-        List films = filmService.getMovieRatings(count);
+        List films = filmService.getPopular(count);
         log.info("Get movie rating {} with {} count", films, count);
         return films;
     }

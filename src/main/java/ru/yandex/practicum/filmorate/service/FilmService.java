@@ -1,87 +1,113 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.controller.Validatable;
+import ru.yandex.practicum.filmorate.controller.ValidateService;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.*;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.storage.db.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.db.genre.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.db.genre.JdbcGenreStorage;
+import ru.yandex.practicum.filmorate.storage.db.like.LikeStorage;
+import ru.yandex.practicum.filmorate.storage.db.mpa.MpaStorage;
+import ru.yandex.practicum.filmorate.storage.db.user.JdbcUserStorage;
+import ru.yandex.practicum.filmorate.storage.db.user.UserStorage;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class FilmService {
-    private final Validatable validateService;
     private final FilmStorage filmStorage;
+    private final GenreStorage genreStorage;
     private final UserStorage userStorage;
-
+    private final LikeStorage likeStorage;
+    private final ValidateService validateService;
+    private final MpaStorage mpaStorage;
 
     @Autowired
-    public FilmService(Validatable validateService,
-                       FilmStorage filmStorage, UserStorage userStorage) {
-        this.validateService = validateService;
+    public FilmService(ru.yandex.practicum.filmorate.storage.db.film.JdbcFilmStorage filmStorage, JdbcUserStorage userStorage, MpaStorage mpaStorage, LikeStorage likeStorage, ValidateService validateService, JdbcGenreStorage genreStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
+        this.likeStorage = likeStorage;
+        this.validateService = validateService;
+        this.genreStorage = genreStorage;
+        this.mpaStorage = mpaStorage;
     }
 
-    ;
-
-    public Film createFilm(Film film) {
+    public Film create(Film film) {
         validateService.validate(film);
-        return filmStorage.createFilm(film);
+        List<Genre> genres = genreStorage.getIds(film.getGenres().stream().map(g -> g.getId()).collect(Collectors.toList()));
+        if (genres.size() != film.getGenres().size()) {
+            throw new NotFoundException("Genres not found");
+        }
+        if (mpaStorage.getById(film.getMpa().getId()) == null) {
+            throw new NotFoundException("mpa not found");
+        }
+        return filmStorage.create(film);
     }
 
-    public Film updateFilm(Film film) {
-        Long filmId = film.getId();
-        isFilmExist(filmId);
+    public Film update(Film film) {
         validateService.validate(film);
-        return filmStorage.updateFilm(film);
-    }
-
-    public Film addLike(Long userId, Long filmId) {
-        Film film = filmStorage.getFilmById(filmId);
-        if (userStorage.getUserById(userId) == null || film == null) {
-            throw new NotFoundException("User or film does not exist");
+        List<Genre> genres = genreStorage.getIds(film.getGenres().stream().map(g -> g.getId()).collect(Collectors.toList()));
+        if (genres.size() != film.getGenres().size()) {
+            throw new NotFoundException("Genres not found");
         }
-        if (filmStorage.getLikesStorage().get(filmId).contains(userId)) {
-            return film;
+
+        isFilmExist(film.getId());
+        if (mpaStorage.getById(film.getMpa().getId()) == null) {
+            throw new NotFoundException("mpa not found");
         }
-        return filmStorage.addLike(userId, filmId);
-    }
-
-    public Film removeLike(Long userId, Long filmId) {
-        isFilmExist(userId);
-        //Проверка на наличие юзера больше нигде не производится
-        isUserExist(userId);
-        return filmStorage.removeLike(userId, filmId);
-    }
-
-    public List<Film> getMovieRatings(Long count) {
-        return filmStorage.getMovieRatings(count);
+        return filmStorage.update(film);
     }
 
     public List<Film> getAll() {
         return filmStorage.getAll();
     }
 
-    public Film getFilmById(long id) {
-        isFilmExist(id);
-        return filmStorage.getFilmById(id);
+    public Film getById(Long id) {
+        Film film = isFilmExist(id);
+        return film;
     }
 
-    private void isFilmExist(Long id) {
-        Film film = filmStorage.getFilmById(id);
+    private Film isFilmExist(Long id) {
+        Film film = filmStorage.getById(id);
         if (film == null) {
-            throw new NotFoundException("This film" + id + "does not exist ");
+            throw new NotFoundException("User" + film + "not exist");
         }
+        return film;
     }
 
-    private void isUserExist(Long id) {
-        User user = userStorage.getUserById(id);
-        if (user == null) {
-            throw new NotFoundException("This user" + id + "does not exist ");
+    public List<Film> getPopular(Long count) {
+        List<Film> films = filmStorage.getPopularFilms(count);
+        return films;
+    }
+
+    public Film like(Long id, Long userId) {
+        Film film = filmStorage.getById(id);
+        if (film == null) {
+            throw new NotFoundException("Film not found");
         }
+        if (userStorage.getById(userId) == null) {
+            throw new NotFoundException("User not found");
+        }
+        likeStorage.add(id, userId);
+        return film;
+    }
+
+    public Film removeLike(Long id, Long userId) {
+        Film film = filmStorage.getById(id);
+        if (film == null) {
+            throw new NotFoundException("Film not found");
+        }
+        if (filmStorage.getById(userId) == null) {
+            throw new NotFoundException("User not found");
+        }
+        likeStorage.remove(id, userId);
+        return film;
     }
 
 }
